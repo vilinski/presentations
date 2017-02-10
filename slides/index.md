@@ -290,6 +290,19 @@ the same with `for`:
 
 ***
 
+### Scala beginner Tipps
+
+    [lang=scala]
+    def getURLContent(url: String): Try[Iterator[String]] =
+    for {
+        url <- parseURL(url)
+        connection <- Try(url.openConnection())
+        is <- Try(connection.getInputStream)
+        source = Source.fromInputStream(is)
+    } yield source.getLines()
+
+***
+
 ### IntelliJ Tipps
 
 - Ctrl+Shfit+A - search for commands
