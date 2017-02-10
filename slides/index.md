@@ -3,9 +3,37 @@
 - author : Andreas Vilinski
 - theme : solarized
 - transition : default
-- links :
-    http://www.slideshare.net/ScottWlaschin/fp-patterns-ndc-london2014
-    https://fsharpforfunandprofit.com/fppatterns/
+
+***
+
+# Scala vs Java and <BR7> What the ... FP ?
+
+***
+
+# Scala vs Java
+
+- statically typed
+- strong(er) type inference
+- Functional + Object oriented
+- everything is an object, even functions
+- every function is a value - including methods
+
+
+***
+
+# Scala vs Java
+Java
+
+    [lang=java]
+    Pair p = new Pair<Integer, String>(1, "Scala");
+
+Scala
+
+    [lang=scala]
+    val p1 = new MyPair(1, "Scala")
+    val p2 = (1, "Scala")
+    val (nr, name) = p2
+
 
 ***
 
@@ -161,137 +189,122 @@ service is just like a microservice but without "micro"
 
 ***
 
-### ADT
+### ADT - algebraic data types
+
+- Simple representation for complex cases
+- Make invalid state impossible
+- Each case is independent in scala
+- Pattern matching ensures all cases handled
+    - (actually in scala not always)
+    - use sealed trait + final case class
+
+***
+
+### ADT - algebraic data types
 
 scala
 
     [lang=scala]
-    trait PaymentMethod
-    case object Cash extends PaymentMethod
-    case class Cheque(nr: ChequeNumber) extends PaymentMethod
-    case class CreditCard(
-            cardType: CardType,
-            nr: CardNumber) extends PaymentMethod
+    type FeatureValueId = Int
+    sealed trait FeatureValue
+    object FeatureValue {
+        final case class DiscreteFeatureValue(value: FeatureValueId) extends FeatureValue
+        final case class NumericFeatureValue(value: Double) extends FeatureValue
+        final case class LiteralFeatureValue(value: String) extends FeatureValue
+        final case class DateFeatureValue(value: LocalDate) extends FeatureValue
+    }
 
-compare with F#
+the same in F#
 
-    [lang=fsharp]
-    type PaymentMethod =
-        | Cash
-        | Cheque of ChequeNumber
-        | Card of CardType * CardNumber
+    type FeatureValueId = int
+    type FeatureValue =
+        | Discrete of FeatureValueId
+        | Numeric of decimal
+        | Literal of string
+        | Date of System.DateTime
+
+***
+
+### Scala beginner Tipps
+
+Things to avoid if not necessary. What to use instead
+
+- `var` ==> `val`
+    - prefer immutable
+    - but mutable if performance critical
+- `def` without parameters is also a function
+- `foreach` ==> `map`, `flatMap`, `filter`, `fold`
+    - scala's `for` is just syntactic shugar for `flatMap`
+- Inheritance
+    - ADTs
+    - Composition over inheritance
+    - but CakePattern wit `trait`s - popular in scala
+
+***
+
+### Scala beginner Tipps
+
+`Option`: `Some(value)` or `None`
+
+- Option is new `null`
+- gives a meaning to `null`, not eliminates it
+- **ADT** - must be handled on the place
+- can cause NRE if comes from java
+    - `new Option(javaObject)`
+- slightl performance drawback - heap instead of stack
+- not overuse it, not propagate if not necessary
+    - `flatMap` it away early or `getOrElse`
+    - don't use `get` - runtime exception!
+
+***
+
+### Scala beginner Tipps
+
+    [lang=scala]
+    val name: Option[String] = request getParameter "name"
+    val upper = name map { _.trim } filter { _.length != 0 } map { _.toUpperCase }
+    println(upper getOrElse "")
+
+the same with `for`:
+
+    [lang=scala]
+    val upper = for {
+        name <- request getParameter "name"
+        trimmed <- Some(name.trim)
+        upper <- Some(trimmed.toUpperCase) if trimmed.length != 0
+    } yield upper
+    println(upper getOrElse "")
+
+***
+
+### Scala beginner Tipps
+
+`import scala.util.{Try, Success, Failure}`
+
+- Avoid throwing exceptions
+- `Try` to catch them
+- Better alternative to exceptions
+- is also an **ADT**
+- [ROP - Railway oriented programming](http://www.slideshare.net/ScottWlaschin/railway-oriented-programming)
+- Happy way programming with flatmap
+
+***
+
+### IntelliJ Tipps
+
+- Ctrl+Shfit+A - search for commands
+- Ctl+Q - Quick documentation. Shows which type infers scala if not explicit
+- Ctl+Shift+P - Implicit parameters
+- Scala Worksheet - REPL with interactive mode
 
 ***
 
 (45)
+weiter mit Kraken?
 
-#### F# (with tooltips)
-
-    let a = 5
-    let factorial x = [1..x] |> List.reduce (*)
-    let c = factorial a
-
----
-
-#### C#
-
-    [lang=cs]
-    using System;
-
-    class Program
-    {
-        static void Main()
-        {
-            Console.WriteLine("Hello, world!");
-        }
-    }
-
----
-
-#### JavaScript
-
-    [lang=js]
-    function copyWithEvaluation(iElem, elem) {
-        return function (obj) {
-            var newObj = {};
-            for (var p in obj) {
-                var v = obj[p];
-                if (typeof v === "function") {
-                    v = v(iElem, elem);
-                }
-                newObj[p] = v;
-            }
-            if (!newObj.exactTiming) {
-                newObj.delay += exports._libraryDelay;
-            }
-            return newObj;
-        };
-    }
-
-
----
-
-#### Haskell
-
-    [lang=haskell]
-    recur_count k = 1 : 1 :
-        zipWith recurAdd (recur_count k) (tail (recur_count k))
-            where recurAdd x y = k * x + y
-
-    main = do
-      argv <- getArgs
-      inputFile <- openFile (head argv) ReadMode
-      line <- hGetLine inputFile
-      let [n,k] = map read (words line)
-      printf "%d\n" ((recur_count k) !! (n-1))
 
 *code from [NashFP/rosalind](https://github.com/NashFP/rosalind/blob/master/mark_wutka%2Bhaskell/FIB/fib_ziplist.hs)*
 
----
-
-### SQL
-
-    [lang=sql]
-    select *
-    from
-    (select 1 as Id union all select 2 union all select 3) as X
-    where Id in (@Ids1, @Ids2, @Ids3)
-
-*sql from [Dapper](https://code.google.com/p/dapper-dot-net/)*
-
----
-
-### Paket
-
-    [lang=paket]
-    source https://nuget.org/api/v2
-
-    nuget Castle.Windsor-log4net >= 3.2
-    nuget NUnit
-
-    github forki/FsUnit FsUnit.fs
-
----
-
-### C/AL
-
-    [lang=cal]
-    PROCEDURE FizzBuzz(n : Integer) r_Text : Text[1024];
-    VAR
-      l_Text : Text[1024];
-    BEGIN
-      r_Text := '';
-      l_Text := FORMAT(n);
-
-      IF (n MOD 3 = 0) OR (STRPOS(l_Text,'3') > 0) THEN
-        r_Text := 'Fizz';
-      IF (n MOD 5 = 0) OR (STRPOS(l_Text,'5') > 0) THEN
-        r_Text := r_Text + 'Buzz';
-      IF r_Text = '' THEN
-        r_Text := l_Text;
-    END;
-
-***
 
 **Bayes' Rule in LaTeX**
 
@@ -311,3 +324,7 @@ $ \Pr(A|B)=\frac{\Pr(B|A)\Pr(A)}{\Pr(B|A)\Pr(A)+\Pr(B|\neg A)\Pr(\neg A)} $
 
 *from [The Reality of a Developer's Life - in GIFs, Of Course](http://server.dzone.com/articles/reality-developers-life-gifs)*
 
+### Links
+
+- http://www.slideshare.net/ScottWlaschin/fp-patterns-ndc-london2014
+- https://fsharpforfunandprofit.com/fppatterns/
