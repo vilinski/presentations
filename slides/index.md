@@ -5,6 +5,7 @@
 - transition : default
 
 ***
+- data-background : images/red-pill.jpg
 
 # Scala vs Java and <BR7> What the ... FP ?
 
@@ -15,9 +16,8 @@
 - statically typed
 - strong(er) type inference
 - Functional + Object oriented
-- everything is an object, even functions
+- everything is an object, including functions
 - every function is a value - including methods
-
 
 ***
 
@@ -33,7 +33,6 @@ Scala
     val p1 = new MyPair(1, "Scala")
     val p2 = (1, "Scala")
     val (nr, name) = p2
-
 
 ***
 
@@ -61,6 +60,7 @@ Scala
 - Strategy
 - Decorator
 - Visitor
+- ...
 
 </td><td>
 
@@ -68,6 +68,7 @@ Scala
 - `def sort(f)`
 - `def decorate(x)`
 - `def rec visit(x)`
+- `...`
 
 </td></tr>
 </table>
@@ -99,15 +100,27 @@ Scala
 
 ***
 
-## And now the Functional patterns
+## Functional patterns
 
+#### Some obligatory basic terms. It's really **easy**!
+
+- Monoid, Monad, Comonad
+- Functor, Bifunctor, Endofunctor
 - Apomorphism, Isomorphism, Sigomorphism
-- Functor, Bifunctor
-- Monoid, Monade, Comonade
+
+<section>
+<div class="fragment">
+
+![FlatMap this shit!](images/trollface.png)
+
+Actually not needed, relax!
+
+</div>
+</section>
 
 ***
 
-### Was a joke, relax ;)
+## Functional patterns
 
 - Core principles:
     - functions are things
@@ -132,24 +145,37 @@ Scala
 
 ### Function is a thing
 
+partial application
+
     [lang=scala]
     def add(x:Int)(y:Int) : Int = x + y // Int => Int => Int
     def add5 = add(5)                   // Int => Int
     def add5mul2(f : Int => Int, x : Int) = f(x) * 2
 
+functional dependency injection
+
+    [lang=scala]
+    def persist[T](log: T => Unit)(persist: T => ID)(entity: T): ID
+    def saveAndLogToMongo = persist(kafkaLog)(mongoInsert)
+    saveAndLogToMongo(MdmProduct) // ObjectId(...)
+
+    def mockPersist = persist(noLogging)(addToHashMap)
+
 ***
 
-### Composition everywhere
+### Function composition
 
     [lang=scala]
     (apple => banana) andThen (banana => cherry)
     (apple => cherry) // new function
 
+![composition](images/composition.jpg)
+
 ***
 
 #### Function composition
 
-OP
+OOP
 
 - functions in the small
 - objects in the large
@@ -159,6 +185,10 @@ FP
 - functions in the small
 - functions in the large
 
+Scala
+
+- what ever you need
+
 ***
 
 #### Function composition
@@ -167,10 +197,9 @@ FP
     // low level operation (micro service)
     String --> toUpper --> String
 
-    // service
+    // high level operation (service)
     --> lowLevel --> lowLevel --> lowLevel -->
     MdmProduct --> FeatureCleanup --> EncodexProduct
-    // Matrjoschka
 
 service is just like a microservice but without "micro"
 
@@ -178,7 +207,7 @@ service is just like a microservice but without "micro"
 
 ### Types are not classes
 
-- Data (List)
+- Data (List->List)
     - set of valid inputs
     - set of valid outputs
 - Behavior (map, collect, filter, etc...)
@@ -189,30 +218,44 @@ service is just like a microservice but without "micro"
 
 ***
 
-### ADT - algebraic data types
+### Product types - case class
 
-- Simple representation for complex cases
-- Make invalid state impossible
-- Each case is independent in scala
-- Pattern matching ensures all cases handled
-    - (actually in scala not always)
-    - use sealed trait + final case class
+**AND** composition
+
+    [lang=scala]
+    case class User(
+        id: Int
+        name: String
+        address: Address
+        contats: List<Contact>
+    )
 
 ***
 
 ### ADT - algebraic data types
 
-scala
+
+<section>
+<div class="fragment">
+<br/>
+
+**OR** composition
+
+</div>
+<div class="fragment">
 
     [lang=scala]
     type FeatureValueId = Int
     sealed trait FeatureValue
     object FeatureValue {
-        final case class DiscreteFeatureValue(value: FeatureValueId) extends FeatureValue
-        final case class NumericFeatureValue(value: Double) extends FeatureValue
-        final case class LiteralFeatureValue(value: String) extends FeatureValue
-        final case class DateFeatureValue(value: LocalDate) extends FeatureValue
+        final case class Discrete(value: FeatureValueId) extends FeatureValue
+        final case class Numeric(value: Double) extends FeatureValue
+        final case class Literal(value: String) extends FeatureValue
+        final case class Date(value: LocalDate) extends FeatureValue
     }
+
+</div>
+<div class="fragment">
 
 the same in F#
 
@@ -223,9 +266,23 @@ the same in F#
         | Literal of string
         | Date of System.DateTime
 
+</div>
+</section>
+
 ***
 
-### Scala beginner Tipps
+### ADT - algebraic data types
+
+- Simple representation for complex cases
+- **Make invalid state impossible**
+- Each case is independent in scala
+- Pattern matching ensures all* cases handled
+    - (actually in scala not all)
+    - `sealed trait` and `final case class`
+
+***
+
+## Scala beginner Tipps
 
 Things to avoid if not necessary. What to use instead
 
@@ -235,10 +292,11 @@ Things to avoid if not necessary. What to use instead
 - `def` without parameters is also a function
 - `foreach` ==> `map`, `flatMap`, `filter`, `fold`
     - scala's `for` is just syntactic shugar for `flatMap`
+- `if .. else` ==> pattern matching
 - Inheritance
     - ADTs
     - Composition over inheritance
-    - but CakePattern wit `trait`s - popular in scala
+    - CakePattern wit `trait`s - popular in scala
 
 ***
 
@@ -246,12 +304,12 @@ Things to avoid if not necessary. What to use instead
 
 `Option`: `Some(value)` or `None`
 
-- Option is new `null`
+- `Option` is new `null`
 - gives a meaning to `null`, not eliminates it
 - **ADT** - must be handled on the place
 - can cause NRE if comes from java
     - `new Option(javaObject)`
-- slightl performance drawback - heap instead of stack
+- slight performance drawback - heap instead of stack
 - not overuse it, not propagate if not necessary
     - `flatMap` it away early or `getOrElse`
     - don't use `get` - runtime exception!
@@ -300,6 +358,13 @@ the same with `for`:
         is <- Try(connection.getInputStream)
         source = Source.fromInputStream(is)
     } yield source.getLines()
+
+
+<div class="fragment">
+
+![FlatMap this shit!](images/flatmap.jpg)
+
+</div>
 
 ***
 
