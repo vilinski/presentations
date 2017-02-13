@@ -22,17 +22,40 @@
 ***
 
 # Scala vs Java
+
+<section>
+<div class="fragment">
+<br/>
+
+$ e = mc^2 $
+
+$ errors = (more\ code)^2 $
+
+</div>
+<div class="fragment">
 Java
 
     [lang=java]
     Pair p = new Pair<Integer, String>(1, "Scala");
 
+</div>
+<div class="fragment">
 Scala
 
     [lang=scala]
     val p1 = new MyPair(1, "Scala")
     val p2 = (1, "Scala")
     val (nr, name) = p2
+
+</div>
+<div class="fragment"></div>
+</section>
+
+***
+
+### Object oriented programming
+
+![OOP ](images/oop_benefits.jpg)
 
 ***
 
@@ -60,14 +83,16 @@ Scala
 - Strategy
 - Decorator
 - Visitor
+- Builder
 - ...
 
 </td><td>
 
-- ```def factory()```
+- `def factory()`
 - `def sort(f)`
 - `def decorate(x)`
 - `def rec visit(x)`
+- `def build(part1,part2)`
 - `...`
 
 </td></tr>
@@ -388,21 +413,10 @@ weiter mit Kraken?
 
 $ \Pr(A|B)=\frac{\Pr(B|A)\Pr(A)}{\Pr(B|A)\Pr(A)+\Pr(B|\neg A)\Pr(\neg A)} $
 
+
 ***
-
-### The Reality of a Developer's Life
-
-**When I show my boss that I've fixed a bug:**
-
-![When I show my boss that I've fixed a bug](http://www.topito.com/wp-content/uploads/2013/01/code-07.gif)
-
-**When your regular expression returns what you expect:**
-
-![When your regular expression returns what you expect](http://www.topito.com/wp-content/uploads/2013/01/code-03.gif)
-
-*from [The Reality of a Developer's Life - in GIFs, Of Course](http://server.dzone.com/articles/reality-developers-life-gifs)*
 
 ### Links
 
-- http://www.slideshare.net/ScottWlaschin/fp-patterns-ndc-london2014
-- https://fsharpforfunandprofit.com/fppatterns/
+- [Goodbye, OOP](https://medium.com/@cscalfani/goodbye-object-oriented-programming-a59cda4c0e53#.irf8cza85)
+- [FP pattern](https://fsharpforfunandprofit.com/fppatterns/)
