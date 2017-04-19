@@ -79,14 +79,23 @@ Both are statically typed<br/>
 </section>
 <section >
 <h1>Scala vs Java</h1>
-<p>Java</p>
+<section>
+<div class="fragment">
+<br/><br/>
+<p><span class="math">\(e = mc^2\)</span></p>
+<p><span class="math">\(errors = (more\ code)^2\)</span></p>
+</div>
+<div class="fragment">
+Java
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 <span class="l">2: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip"><code lang="java">Pair p = new Pair&lt;Integer, String&gt;(1, "Scala");
 String p1 = p.Item1;
 </code></pre></td></tr></table>
-<p>Scala</p>
+</div>
+<div class="fragment">
+Scala
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 <span class="l">2: </span>
 <span class="l">3: </span>
@@ -95,6 +104,13 @@ String p1 = p.Item1;
 val p2 = (1, "Scala")
 val (nr, name) = p2
 </code></pre></td></tr></table>
+</div>
+<div class="fragment"></div>
+</section>
+</section>
+<section >
+<h3>Object oriented programming</h3>
+<p><img src="images/oop_benefits.jpg" alt="OOP " /></p>
 </section>
 <section >
 <h1>What the ... <a href="">FP</a> ?</h1>
@@ -125,6 +141,7 @@ in OOP is Object the first place where you look to<br/>
 <li>Strategy</li>
 <li>Decorator</li>
 <li>Visitor</li>
+<li>Builder</li>
 <li>...</li>
 </ul>
 </td><td>
@@ -133,6 +150,7 @@ in OOP is Object the first place where you look to<br/>
 <li><code>def sort(f)</code></li>
 <li><code>def decorate(x)</code></li>
 <li><code>def rec visit(x)</code></li>
+<li><code>def build(part1,part2)</code></li>
 <li><code>...</code></li>
 </ul>
 </td></tr>
@@ -353,7 +371,6 @@ Composition over inheritance<br/>
 <span class="l">6: </span>
 <span class="l">7: </span>
 <span class="l">8: </span>
-<span class="l">9: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip"><code lang="scala">type FeatureValueId = Int
 sealed trait FeatureValue
@@ -363,8 +380,8 @@ object FeatureValue {
     final case class Literal(value: String) extends FeatureValue
     final case class Date(value: LocalDate) extends FeatureValue
 }
-val displaySize = FeatureValue.Numeric(7.0) // Numeric
 </code></pre></td></tr></table>
+<p>val displaySize = FeatureValue.Numeric(7.0) // Numeric</p>
 </div>
 <div class="fragment">
 <p>the same in F#</p>
@@ -536,8 +553,10 @@ for {
 <section >
 <h3>Links</h3>
 <ul>
-<li><a href="http://www.slideshare.net/ScottWlaschin/fp-patterns-ndc-london2014">http://www.slideshare.net/ScottWlaschin/fp-patterns-ndc-london2014</a></li>
-<li><a href="https://fsharpforfunandprofit.com/fppatterns/">https://fsharpforfunandprofit.com/fppatterns/</a></li>
+<li><a href="https://medium.com/@cscalfani/goodbye-object-oriented-programming-a59cda4c0e53#.irf8cza85">Goodbye, OOP</a></li>
+<li><a href="https://fsharpforfunandprofit.com/fppatterns/">FP pattern</a></li>
+<li><a href="https://learnxinyminutes.com/docs/de-de/scala-de/">Learn X in Y minutes - Scala</a></li>
+<li><a href="https://twitter.github.io/scala_school/">Twitter Scala school</a></li>
 </ul>
 </section>
 
