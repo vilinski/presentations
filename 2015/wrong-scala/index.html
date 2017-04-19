@@ -1,0 +1,357 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>FsReveal</title>
+    <meta name="description" content="Introduction to FsReveal">
+    <meta name="author" content="Karlkim Suwanmongkol">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <script src="//code.jquery.com/jquery-1.8.0.js"></script>
+    <script src="//code.jquery.com/ui/1.8.23/jquery-ui.js"></script>
+    <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/night.css" id="theme">
+    <link type="text/css" rel="stylesheet" href="fsharp.formatting/styles/style.css" />
+    <link type="text/css" rel="stylesheet" href="fsharp.formatting/styles/deedle.css" />
+    <link type="text/css" rel="stylesheet" href="css/custom.css" />
+    <script src="fsharp.formatting/styles/tips.js" type="text/javascript"></script>
+    <!-- For syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+    <link rel="stylesheet" href="css/fsreveal.css">
+    <!-- If the query includes 'print-pdf', include the PDF print sheet -->
+    <script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+    </script>
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+    <script language="javascript" type="text/javascript">
+        function init()
+        {
+            websocket = new WebSocket("ws://"+window.location.host+"/websocket");
+            websocket.onmessage = function(evt) { location.reload(); };
+        }
+        window.addEventListener("load", init, false);
+    </script>
+</head>
+<body>
+    <div class="reveal">
+        <div class="tip" id="fs1">module String<br /><br />from Microsoft.FSharp.Core</div>
+<div class="tip" id="fs2">Multiple items<br />val string : value:&#39;T -&gt; string<br /><br />Full name: Microsoft.FSharp.Core.Operators.string<br /><br />--------------------<br />type string = System.String<br /><br />Full name: Microsoft.FSharp.Core.string</div>
+<div class="tip" id="fs3">Multiple items<br />module Event<br /><br />from Microsoft.FSharp.Control<br /><br />--------------------<br />type Event&lt;&#39;T&gt; =<br />&#160;&#160;new : unit -&gt; Event&lt;&#39;T&gt;<br />&#160;&#160;member Trigger : arg:&#39;T -&gt; unit<br />&#160;&#160;member Publish : IEvent&lt;&#39;T&gt;<br /><br />Full name: Microsoft.FSharp.Control.Event&lt;_&gt;<br /><br />--------------------<br />type Event&lt;&#39;Delegate,&#39;Args (requires delegate and &#39;Delegate :&gt; Delegate)&gt; =<br />&#160;&#160;new : unit -&gt; Event&lt;&#39;Delegate,&#39;Args&gt;<br />&#160;&#160;member Trigger : sender:obj * args:&#39;Args -&gt; unit<br />&#160;&#160;member Publish : IEvent&lt;&#39;Delegate,&#39;Args&gt;<br /><br />Full name: Microsoft.FSharp.Control.Event&lt;_,_&gt;<br /><br />--------------------<br />new : unit -&gt; Event&lt;&#39;T&gt;<br /><br />--------------------<br />new : unit -&gt; Event&lt;&#39;Delegate,&#39;Args&gt;</div>
+
+        <!-- Any section element inside of this container is displayed as a slide -->
+        <div class="slides">
+            <section >
+<section >
+<h2>zuerst über mich</h2>
+<p>Programmierung ist meine Leidenschaft
+Galopp über Programmiersprachen</p>
+</section>
+<section >
+<p>Schule: basic</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="n">10</span> <span class="i">PRINT</span> <span class="s">&quot;Hello World!&quot;</span>
+<span class="n">20</span> <span class="i">GOTO</span> <span class="n">10</span>
+</code></pre></td>
+</tr>
+</table>
+</section>
+<section >
+<p>Erste Job: Delphi</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+<span class="l">6: </span>
+<span class="l">7: </span>
+<span class="l">8: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">program</span> <span class="i">Helloworld</span>;
+{<span class="o">$</span><span class="i">APPTYPE</span> <span class="i">CONSOLE</span>}
+<span class="i">uses</span> <span class="i">sysutils</span>;
+
+<span class="k">begin</span>
+  <span class="i">writeln</span>(<span class="o">&#39;</span><span class="i">Hello</span>, <span class="i">world!</span><span class="o">&#39;</span>);
+  <span class="i">sleep</span>(<span class="n">3000</span>);
+<span class="k">end</span><span class="o">.</span>
+</code></pre></td>
+</tr>
+</table>
+</section>
+<section >
+<h2>Studium</h2>
+<p>Handvoll neue Sprachen für den leeren Schädel</p>
+<ul>
+<li>C/C++</li>
+<li>Java</li>
+<li>Perl</li>
+<li>Schema - FP (Lisp derivate)</li>
+<li>C# - new and hot</li>
+</ul>
+</section>
+<section >
+<p><a href="https://www.youtube.com/watch?v=TS1lpKBMkgg">Scala 2013 We're Doing It All Wrong</a></p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip"><code lang="scala">val x1:Float = Long.MaxValue
+val x2:Float = Long.MaxValue - Int.MaxValue
+println(x1 == x2) // true
+</code></pre></td></tr></table>
+<blockquote>
+<p>The key to performance is elegance, not battalions of special cases. Bentley</p>
+</blockquote>
+</section>
+<section >
+<h2>Was ist FP</h2>
+<ul>
+<li>Higher order functions, not Objects</li>
+<li>Pattern matching</li>
+<li>ADT</li>
+<li>Type classes</li>
+</ul>
+</section>
+<section >
+<h2>Pattern matching und ADT - <br/>Algebraic Data Types</h2>
+<p>FP - Version of objects</p>
+<h4>Haskell</h4>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">data</span> <span class="i">Tree</span> <span class="i">a</span> <span class="o">=</span> <span class="i">Leaf</span> | <span class="i">Branch</span> <span class="i">a</span> (<span class="i">Tree</span> <span class="i">a</span>) (<span class="i">Tree</span> <span class="i">a</span>)
+</code></pre></td>
+</tr>
+</table>
+<h4>F#</h4>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">type</span> <span class="o">&#39;</span><span class="i">a</span> <span class="i">Tree</span> <span class="o">=</span> <span class="i">Leaf</span> | <span class="i">Branch</span> <span class="k">of</span> <span class="o">&#39;</span><span class="i">a</span> <span class="o">*</span> <span class="o">&#39;</span><span class="i">a</span> <span class="i">Tree</span> <span class="o">*</span> <span class="o">&#39;</span><span class="i">a</span> <span class="i">Tree</span>
+<span class="k">type</span> <span class="i">Tree</span><span class="o">&lt;</span><span class="i">a</span><span class="o">&gt;</span> <span class="o">=</span> <span class="i">Leaf</span> | <span class="i">Branch</span> <span class="k">of</span> (<span class="i">a</span> <span class="o">*</span> <span class="i">Tree</span><span class="o">&lt;</span><span class="i">a</span><span class="o">&gt;</span> <span class="o">*</span> <span class="i">Tree</span><span class="o">&lt;</span><span class="i">a</span><span class="o">&gt;</span>)
+</code></pre></td>
+</tr>
+</table>
+<h4>Scala</h4>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">sealed</span> <span class="i">trait</span> <span class="i">Tree</span>[<span class="o">+</span><span class="i">T</span>]
+<span class="i">case</span> <span class="i">object</span> <span class="i">Leaf</span> <span class="i">extends</span> <span class="i">Tree</span>[<span class="i">Nothing</span>]
+<span class="i">case</span> <span class="k">class</span> <span class="i">Branch</span>[<span class="i">T</span>](<span class="i">value</span><span class="o">:</span> <span class="i">T</span>, <span class="i">left</span><span class="o">:</span> <span class="i">Tree</span>[<span class="i">T</span>], <span class="i">right</span><span class="o">:</span> <span class="i">Tree</span>[<span class="i">T</span>]) <span class="i">extends</span> <span class="i">Tree</span>[<span class="i">T</span>]
+</code></pre></td>
+</tr>
+</table>
+</section>
+<section >
+<h2>type classes</h2>
+<p>FP-Version of OOP interface</p>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="o">--</span> <span class="i">Haskell</span>
+<span class="k">class</span> <span class="i">Show</span> <span class="i">a</span> <span class="i">where</span>
+    <span class="i">show</span> <span class="o">::</span> <span class="i">a</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs1', 1)" onmouseover="showTip(event, 'fs1', 1)" class="i">String</span>
+<span class="c">// Java</span>
+<span class="k">public</span> <span class="k">interface</span> <span class="i">Show</span> {
+    <span onmouseout="hideTip(event, 'fs1', 2)" onmouseover="showTip(event, 'fs1', 2)" class="i">String</span> <span class="i">show</span>();
+}
+<span class="c">// Scala</span>
+<span class="i">trait</span> <span class="i">Show</span> {
+  <span class="i">def</span> <span class="i">show</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs1', 3)" onmouseover="showTip(event, 'fs1', 3)" class="i">String</span>
+}
+<span class="c">// f#</span>
+<span class="k">let</span> <span class="k">inline</span> <span class="i">show</span> <span class="i">arg</span> <span class="o">=</span>
+  ( <span class="o">^</span><span class="i">a</span> <span class="o">:</span> (<span class="k">member</span> <span class="i">Show</span> <span class="o">:</span> <span onmouseout="hideTip(event, 'fs2', 4)" onmouseover="showTip(event, 'fs2', 4)" class="i">string</span>) <span class="i">arg</span>)
+</code></pre></td>
+</tr>
+</table>
+</section>
+<section >
+<h2>type classes</h2>
+<h3>in scala nicht ganz</h3>
+<h4>haskell</h4>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="k">class</span> <span class="i">Show</span> <span class="i">a</span> <span class="i">where</span>
+  <span class="i">show</span> <span class="o">::</span> <span class="i">a</span> <span class="k">-&gt;</span> <span onmouseout="hideTip(event, 'fs1', 5)" onmouseover="showTip(event, 'fs1', 5)" class="i">String</span>
+
+<span class="i">instance</span> <span class="i">Show</span> <span class="i">Int</span> <span class="i">where</span>
+  <span class="o">--</span><span class="i">show</span> <span class="i">x</span> <span class="o">=</span> <span class="o">..</span><span class="o">.</span>
+</code></pre></td>
+</tr>
+</table>
+<p>look, needs no implementation for basic types!</p>
+</section>
+<section >
+<h2>type classes</h2>
+<h4>scala</h4>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+<span class="l">13: </span>
+<span class="l">14: </span>
+<span class="l">15: </span>
+<span class="l">16: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">trait</span> <span class="i">Showable</span>[<span class="i">T</span>] {
+    <span class="i">def</span> <span class="i">show</span>(<span class="i">value</span><span class="o">:</span> <span class="i">T</span>)<span class="o">:</span> <span onmouseout="hideTip(event, 'fs1', 6)" onmouseover="showTip(event, 'fs1', 6)" class="i">String</span>
+}
+<span class="i">object</span> <span class="i">ImplicitsDecimal</span> {
+    <span class="i">implicit</span> <span class="i">object</span> <span class="i">IntShowable</span> <span class="i">extends</span> <span class="i">Showable</span>[<span class="i">Int</span>] {
+        <span class="i">def</span> <span class="i">show</span>(<span class="i">value</span><span class="o">:</span> <span class="i">Int</span>) <span class="o">=</span> <span class="i">Integer</span><span class="o">.</span><span class="i">toString</span>(<span class="i">value</span>)
+    }
+}
+<span class="i">object</span> <span class="i">ImplicitsHexadecimal</span> {
+    <span class="i">implicit</span> <span class="i">object</span> <span class="i">IntShowable</span> <span class="i">extends</span> <span class="i">Showable</span>[<span class="i">Int</span>] {
+        <span class="i">def</span> <span class="i">show</span>(<span class="i">value</span><span class="o">:</span> <span class="i">Int</span>) <span class="o">=</span> <span class="i">Integer</span><span class="o">.</span><span class="i">toString</span>(<span class="i">value</span>, <span class="n">16</span>)
+    }
+}
+<span class="i">def</span> <span class="i">showValue</span>[<span class="i">T</span><span class="o">:</span> <span class="i">Showable</span>](<span class="i">value</span><span class="o">:</span> <span class="i">T</span>) <span class="o">=</span> <span class="i">implicitly</span>[<span class="i">Showable</span>[<span class="i">T</span>]]<span class="o">.</span><span class="i">show</span>(<span class="i">value</span>)
+<span class="c">// Or, equivalently:</span>
+<span class="c">// def showValue[T](value: T)(implicit showable: Showable[T]) = showable.show(value)</span>
+</code></pre></td>
+</tr>
+</table>
+</section>
+<section >
+<h2>type classes</h2>
+<h4>scala</h4>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="c">// Usage - good luck!</span>
+{
+    <span class="i">import</span> <span class="i">ImplicitsHexadecimal</span><span class="o">.</span>_
+    <span class="i">import</span> <span class="i">ImplicitsDecimal</span><span class="o">.</span>_
+    <span class="i">println</span>(<span class="i">showValue</span>(<span class="n">10</span>))  <span class="c">// Prints &quot;10&quot;</span>
+}
+{
+    <span class="i">import</span> <span class="i">ImplicitsDecimal</span><span class="o">.</span>_
+    <span class="i">import</span> <span class="i">ImplicitsHexadecimal</span><span class="o">.</span>_
+    <span class="i">println</span>(<span class="i">showValue</span>(<span class="n">10</span>))  <span class="c">// Prints &quot;a&quot;</span>
+}
+</code></pre></td>
+</tr>
+</table>
+</section>
+</section>
+<section >
+<h4>JavaSript?</h4>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="fsharp"><span class="i">var</span> <span class="i">xhr</span> <span class="o">=</span> <span class="k">new</span> <span class="i">XMLHttpRequest</span>()
+
+<span class="i">xhr</span><span class="o">.</span><span class="k">open</span>(<span class="s">&quot;GET&quot;</span>,
+  <span class="s">&quot;https://api.twitter.com/1.1/search/tweets.json?q=%23scalajs&quot;</span>
+)
+<span class="i">xhr</span><span class="o">.</span><span class="i">onLoad</span> <span class="o">=</span> (<span class="i">e</span><span class="o">:</span> <span onmouseout="hideTip(event, 'fs3', 7)" onmouseover="showTip(event, 'fs3', 7)" class="i">Event</span>) <span class="o">=&gt;</span> {
+  <span class="k">if</span> (<span class="i">xhr</span><span class="o">.</span><span class="i">status</span> <span class="o">==</span> <span class="n">200</span>){
+    <span class="i">var</span> <span class="i">r</span> <span class="o">=</span> <span class="i">JSON</span><span class="o">.</span><span class="i">parse</span>(<span class="i">xhr</span><span class="o">.</span><span class="i">responseText</span>)
+    <span class="o">$</span>(<span class="s">&quot;#tweets&quot;</span>)<span class="o">.</span><span class="i">html</span>(<span class="i">parseTweets</span>(<span class="i">r</span>))
+  }
+}
+<span class="i">xhr</span><span class="o">.</span><span class="i">send</span>()
+</code></pre></td>
+</tr>
+</table>
+<p>Actually scala.js - hardly differed, only type safe</p>
+</section>
+
+
+        </div>
+    </div>
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+    <script>
+        // Add the nohighlight class and data-noescape attribute to code elements that have already been formatted by FSharp.Formatting
+        $('pre.highlighted code').addClass('nohighlight').attr('data-noescape', '');
+
+        // Full list of configuration options available here:
+        // https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize({
+            controls: true,
+            progress: true,
+            history: true,
+            center: true,
+
+            transition: 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+            // Parallax scrolling
+            // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+            // parallaxBackgroundSize: '2100px 900px',
+
+            // Optional libraries used to extend on reveal.js
+            dependencies: [
+                { src: 'lib/js/classList.js', condition: function () { return !document.body.classList; } },
+                { src: 'plugin/markdown/marked.js', condition: function () { return !!document.querySelector('[data-markdown]'); } },
+                { src: 'plugin/markdown/markdown.js', condition: function () { return !!document.querySelector('[data-markdown]'); } },
+                { src: 'plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } },
+                { src: 'plugin/zoom-js/zoom.js', async: true, condition: function () { return !!document.body.classList; } },
+                { src: 'plugin/notes/notes.js', async: true, condition: function () { return !!document.body.classList; } }
+            ]
+        });
+
+    </script>
+</body>
+</html>
+
