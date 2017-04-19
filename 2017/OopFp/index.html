@@ -245,7 +245,7 @@ In C# `ref` or `out` - avoid such things in scala<br/>
 <span class="l">3: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip"><code lang="scala">def add(x:Int)(y:Int) : Int = x + y // Int =&gt; Int =&gt; Int
-def add5 = add(5)                   // Int =&gt; Int
+def add5 = add(5) _                  // Int =&gt; Int
 def add5mul2(add5 : Int =&gt; Int, x : Int) = add5(x) * 2
 </code></pre></td></tr></table>
 <p>functional dependency injection</p>
@@ -254,12 +254,14 @@ def add5mul2(add5 : Int =&gt; Int, x : Int) = add5(x) * 2
 <span class="l">3: </span>
 <span class="l">4: </span>
 <span class="l">5: </span>
+<span class="l">6: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip"><code lang="scala">def persist[T](log: T =&gt; Unit)(persist: T =&gt; ID)(entity: T): ID
-def saveAndLogToMongo = persist(kafkaLog)(mongoInsert)
-saveAndLogToMongo(MdmProduct) // ObjectId(...)
+<td class="snippet"><pre class="fssnip"><code lang="scala">def persist[T](insert: T =&gt; ID)(log: T =&gt; Unit)(entity: T): ID
+def saveToMongo = persist(mongoInsert) _ _
+def saveToMongoLogToKafka = persist(mongoInsert)(kafkaLog) _
+saveToMongoLogToKafka(MdmProduct) // ObjectId(...)
 
-def mockPersist = persist(noLogging)(addToHashMap)
+def mockPersist = persist(addToHashMap)(logToConsole)
 </code></pre></td></tr></table>
 </section>
 <section >
@@ -557,6 +559,7 @@ for {
 <li><a href="https://fsharpforfunandprofit.com/fppatterns/">FP pattern</a></li>
 <li><a href="https://learnxinyminutes.com/docs/de-de/scala-de/">Learn X in Y minutes - Scala</a></li>
 <li><a href="https://twitter.github.io/scala_school/">Twitter Scala school</a></li>
+<li><a href="https://www.youtube.com/watch?v=TS1lpKBMkgg">Scala 2013 We're Doing It All Wrong</a></li>
 </ul>
 </section>
 
