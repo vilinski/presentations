@@ -21,17 +21,20 @@ Computation expression  | ✓  | nicht geplant
 
 https://fsharpforfunandprofit.com/fppatterns/
 
-|  OOP                                | FP
-|-------------------------------------|---
+|  OOP                        | FP
+|-----------------------------|---
 | Single Responsibility (SRP) | Function
 | Open/Closed principle (OCP) | Function
 | Liskoff Substitution (LSP)  | also
 | Interface Segregation (ISP) | Yes, functions
 | Dependency Inversion (DIP)  | Oh my, again!
-| Factory | Yepp, also
-| Strategy | `List.Sort(x=>x.Name)`|
+
+|  OOP      | FP
+|-----------|---------------------------
+| Builder   | Build()
+| Strategy  | `List.Sort(x=>x.Name)`|
 | Decorator | HttpMessageHandler(LoggingMessageHandler) - aus Chassy
-| Visitor   | Rate mal
+| Visitor   | Visit()
 
 https://medium.com/@cscalfani/goodbye-object-oriented-programming-a59cda4c0e53
 
@@ -60,7 +63,6 @@ Banana-Monkey-Jungle problem
 - [Top paying Technologies][top-payed]
 - http://armlinux.ro/FablePresentation2018/#/
 - https://www.slideshare.net/AntyaDev/adopting-f-at-sbtech
-
 
 
 # Images
