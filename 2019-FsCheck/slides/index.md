@@ -106,10 +106,10 @@
     public class UselessTests
     {
         [Fact]
-        [InlineData(0.0, 0.0)]
-        [InlineData(30.0, 0,5)]
-        [InlineData(45.0, 0,70711)]
-        [InlineData(60.0, 0,86603)]
+        [InlineData( 0.0, 0.0)]
+        [InlineData(30.0, 0.5)]
+        [InlineData(45.0, 0.70711)]
+        [InlineData(60.0, 0.86603)]
         [InlineData(90.0, 1.0)]
         public void SinTest(double input, double expected)
         {
@@ -134,11 +134,11 @@ Schon besser, aber...
 
 ## Property-based tests
 
-- Andere Name: Fuzzy-Tests,
-- Original entstanden in Haskell's [QuickCheck](https://wiki.haskell.org/Introduction_to_QuickCheck2)
+- Auch genannt: Fuzzy-Tests, Ungenaue Tests
+- In Haskell seit 1990's [QuickCheck](https://wiki.haskell.org/Introduction_to_QuickCheck2)
 - Portiert in viele Programmiersprachen
-- Auch .NET F# [FsCheck](https://fscheck.github.io/FsCheck/)
-- In C# auch nützlich
+    - JS [JsVerify](https://github.com/jsverify/jsverify#documentation)
+    - .NET (F#, C#) [FsCheck](https://fscheck.github.io/FsCheck/)
 
 ' Portierungen haben in allen bekannten Sprachen
 ' Mit ähnlichen Namen
@@ -175,7 +175,7 @@ Ist die liste sortiert?
         "Alles", "kann", "man", "nicht", "testen"
     };
 
-    public bool IsTested(List<string> list) {
+    public bool IsOrdered(List<string> list) {
         for(var i; i++; i < list.Count - 1)
             Assert.LessThan(list[i], list[i+1]);
     }
@@ -184,6 +184,7 @@ Ist die liste sortiert?
 
 ### Property
 
+    [lang=cs]
     [Fact]
     //[InlineData(list,orderedList)]
     public void MySortTest() {
@@ -193,40 +194,70 @@ Ist die liste sortiert?
         Assert.Equal(list.OrderBy(x => x), MySort(list));
     }
 
+' jetzt implementiere ich eine Sortierfuntkon und möchte die testen
+
 ---
 
 ### Property
 
-Zwei Wege zum Resultat vergleichen
+    [lang=cs]
+    using FsCheck;
 
     [Fact]
     public void MySortTest() {
         Prop.ForAll<List<string>>(list => {
             var expected = list.OrderBy(x => x).ToList();
             var actual = MySort(list);
+            // return (expected == actual);
             Assert.True(expected.SequenceEquals(actual));
         }).QuickCheck("MySort");
     }
 
+Zwei Wege zum Ziel + Resultat vergleichen
+
 ---
 
 ### Property
+
+    [lang=cs]
+    [Fact]
+    public void JsonSerializerTest() {
+        Prop.ForAll<AlarmViewModel>(vm =>
+            vm.ToJson().FromJson<AlarmViewModel>() == vm
+            // in C# hier asserts pro Property nötig
+            // oder vm.ToJson() nur nicht in diesem Fall
+        ).QuickCheck("MySort");
+    }
 
 Oder eine Schleife bauen (serializer, converter, o.Ä.)
 
-    [Fact]
-    public void JsonSerializerTest() {
-        Prop.ForAll<AlarmViewModel>(vm => {
-            vm.ToJson().FromJson<AlarmViewModel>() == vm;
-            // in C# hier asserts pro Property nötig
-        }).QuickCheck("MySort");
+' um zwei instanzen einer klasse zu vergleichen kann json verwendet werden
+
+---
+
+### Property classify
+
+    [lang=cs]
+    [Property]
+    public bool Increment_Twice_Is_The_Same_As_Adding_Two(int x)
+    {
+        return
+            (Add(1, Add(1, x)) == Add(x, 2))
+            .Classify(x > 10, "Bigger than '10'")
+            .Classify(x < 1000, "Smaller than '1000'");
     }
+
+<pre>
+    Ok, passed 100 tests.
+    63% Smaller than ‚1000‘.
+    37% Smaller than ‚1000‘, Bigger than ’10‘.
+</pre>
 
 ---
 
 ### Property
 
-
+    [lang=cs]
     [Fact]
     public void TicketPostTest() {
         Prop.ForAll<TicketViewModel>(ticket => {
@@ -239,6 +270,7 @@ Oder eine Schleife bauen (serializer, converter, o.Ä.)
 
 ### FsCheck.XUnit
 
+    [lang=cs]
     [Property]
     public void TicketPostTest(TicketViewModel ticket) {
         var controller = ...
@@ -247,8 +279,9 @@ Oder eine Schleife bauen (serializer, converter, o.Ä.)
 
 ---
 
-### FsCheck.XUnit
+### FsCheck.XUnit output
 
+    [lang=cs]
     public class Test
     {
         private readonly ITestOutputHelper _TestOutputHelper;
@@ -268,7 +301,47 @@ Oder eine Schleife bauen (serializer, converter, o.Ä.)
 
 ---
 
-### FsCheck
+### FsCheck generator
 
-[Dokumentation](https://fscheck.github.io/FsCheck/)
-[Code Examples in C# und F#](https://github.com/fscheck/FsCheck/tree/master/examples)
+    [lang=cs]
+    [Property]
+    public bool SomeProviderTest1()
+    {
+        var str50 = Arb
+            .Generate<string>()
+            .Where(s => s != null && s.Length <= 50);
+        Prop.ForAll(str50, description =>
+        {
+            var isSet = alarmProvider.SetDescription(alarmId, description);
+            Assert.True(isSet);
+        }).QuickCheckThrowOnFailure();
+    }
+
+---
+
+### FsCheck generator
+
+    [lang=cs]
+    var arbAddress =
+        from city in Arb.Generate<string>()
+                        .Where(s.Length <= 50)
+        from street in Arb.Generate<string>()
+                          .Where(s.Length <= 50)
+        select (city, street);
+
+    Prop.ForAll(arbAddress, (city, street) =>
+    {
+        var isUpdated = updater.SetAddress(city, street);
+        Assert.True(isUpdated);
+    }).QuickCheckThrowOnFailure();
+
+---
+
+### FsCheck Links
+
+- [Dokumentation](https://fscheck.github.io/FsCheck/)
+- [Code Beispiele in C# und F#](https://github.com/fscheck/FsCheck/tree/master/examples)
+- [FsReveal](http://fsprojects.github.io/FsReveal/)
+    - [Reveal.js](https://revealjs.com/#/)
+    - [Markdown](https://de.wikipedia.org/wiki/Markdown)
+    - [F#](https://fsharpforfunandprofit.com)
