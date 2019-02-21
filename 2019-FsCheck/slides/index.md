@@ -12,11 +12,17 @@
 
 ## Test Coverage
 
-![test coverage](./images/test-coverage.png)
+![coverage badge](./images/coverage-badge.png)
 
 ' Coverage badge bei uns in jedem Projekt
 ' Einerseits - Lakmuspapier, andererseits nutzlos
 ' TestCoverage testet nur die Fleiß der Tester, nicht die Korrektheit
+
+---
+
+## Test Coverage
+
+![coverage badge](./images/dotcover-code.png)
 
 ---
 
@@ -127,18 +133,21 @@
 Schon besser, aber...
 
 - Erlaubt sind nur primitive Typen (`string`, `int`, `double`, etc.)
+- Werte müssen vorberechnet werden
 - Immer noch nicht alle Werte Abgedeckt
-- Erinnerung: wir haben 100% test coverage
+- Test coverage bleibt groß
 
 ***
 
 ## Property-based tests
 
 - Auch genannt: Fuzzy-Tests, Ungenaue Tests
+- Kein "Neuland"
 - In Haskell seit 1990's [QuickCheck](https://wiki.haskell.org/Introduction_to_QuickCheck2)
 - Portiert in viele Programmiersprachen
     - JS [JsVerify](https://github.com/jsverify/jsverify#documentation)
     - .NET (F#, C#) [FsCheck](https://fscheck.github.io/FsCheck/)
+- Randomisierte Eingabe (100 mal)
 
 ' Portierungen haben in allen bekannten Sprachen
 ' Mit ähnlichen Namen
@@ -161,14 +170,16 @@ Hier sind C# Properties
     }
 
 </p><p class="fragment roll-in">
+
 Nur diese haben damit nichts zu tun 😀
+
 </p></section>
 
 ---
 
 ### Property
 
-Ist die liste sortiert?
+"Ist die liste sortiert?"
 
     [lang=cs]
     var list = List<string> {
@@ -179,6 +190,9 @@ Ist die liste sortiert?
         for(var i; i++; i < list.Count - 1)
             Assert.LessThan(list[i], list[i+1]);
     }
+
+' grob gesagt Property ist nur eine funktion
+' bool Rückgabe bedeutet ob es erfüllt ist
 
 ---
 
@@ -195,6 +209,7 @@ Ist die liste sortiert?
     }
 
 ' jetzt implementiere ich eine Sortierfuntkon und möchte die testen
+' InlineData funktioniert mit Listen nicht
 
 ---
 
@@ -209,11 +224,16 @@ Ist die liste sortiert?
             var expected = list.OrderBy(x => x).ToList();
             var actual = MySort(list);
             // return (expected == actual);
+            // return IsOrdered(actual);
             Assert.True(expected.SequenceEquals(actual));
         }).QuickCheck("MySort");
     }
 
+<section><p class="fragment roll-in">
+
 Zwei Wege zum Ziel + Resultat vergleichen
+
+</p></section>
 
 ---
 
@@ -232,26 +252,6 @@ Zwei Wege zum Ziel + Resultat vergleichen
 Oder eine Schleife bauen (serializer, converter, o.Ä.)
 
 ' um zwei instanzen einer klasse zu vergleichen kann json verwendet werden
-
----
-
-### Property classify
-
-    [lang=cs]
-    [Property]
-    public bool Increment_Twice_Is_The_Same_As_Adding_Two(int x)
-    {
-        return
-            (Add(1, Add(1, x)) == Add(x, 2))
-            .Classify(x > 10, "Bigger than '10'")
-            .Classify(x < 1000, "Smaller than '1000'");
-    }
-
-<pre>
-    Ok, passed 100 tests.
-    63% Smaller than ‚1000‘.
-    37% Smaller than ‚1000‘, Bigger than ’10‘.
-</pre>
 
 ---
 
@@ -276,6 +276,29 @@ Oder eine Schleife bauen (serializer, converter, o.Ä.)
         var controller = ...
         Assert.DoesNotThrow(() => controller.Post(ticket));
     }
+
+' es gibt unterstützung für Testframeworke, XUnit auch
+' PropertyAttribute
+
+---
+
+### FsCheck.XUnit
+
+    [lang=cs]
+    [Property]
+    public bool Increment_Twice_Is_The_Same_As_Adding_Two(int x)
+    {
+        return
+            (Add(1, Add(1, x)) == Add(x, 2))
+            .Classify(x > 10, "Bigger than '10'")
+            .Classify(x < 1000, "Smaller than '1000'");
+    }
+
+<pre>
+    Ok, passed 100 tests.
+    63% Smaller than ‚1000‘.
+    37% Smaller than ‚1000‘, Bigger than ’10‘.
+</pre>
 
 ---
 
@@ -334,6 +357,30 @@ Oder eine Schleife bauen (serializer, converter, o.Ä.)
         var isUpdated = updater.SetAddress(city, street);
         Assert.True(isUpdated);
     }).QuickCheckThrowOnFailure();
+
+---
+
+### FsCheck generator
+
+    [lang=cs]
+    public class TicketBodyGenerator
+    {
+        public static Arbitrary<ITicketBody> TicketBody()
+        {
+            var genMaintenance = Arb.Generate<Maintenance>().Select(x => (ITicketBody) x);
+            var genLimitViolation = Arb.Generate<LimitViolation>().Select(x => (ITicketBody) x);
+            var genTimeout = Arb.Generate<Timeout>().Select(x => (ITicketBody) x);
+            var gen = Gen.OneOf(genMaintenance, genLimitViolation, genTimeout);
+            return Arb.From(gen);
+        }
+    }
+
+    ...
+
+    Arb.Register<TicketBodyGenerator>();
+    Prop.ForAll((Ticket t) => {
+        ...
+        });
 
 ---
 
