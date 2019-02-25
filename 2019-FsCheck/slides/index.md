@@ -90,10 +90,12 @@
         {
             Assert.Equal(0.0, Useless.Sin(0.0));
         }
+        [Fact]
         public void Sin30Test()
         {
             Assert.Equal(30.0, Useless.Sin(0.5));
         }
+        [Fact]
         public void Sin90Test()
         {
             Assert.Equal(90.0, Useless.Sin(1.0));
@@ -111,7 +113,7 @@
     [lang=cs]
     public class UselessTests
     {
-        [Fact]
+        [Theory] //[Fact]
         [InlineData( 0.0, 0.0)]
         [InlineData(30.0, 0.5)]
         [InlineData(45.0, 0.70711)]
@@ -122,6 +124,12 @@
             Assert.Equal(expected, Useless.Sin(input));
         }
     }
+
+<div class="fragment">
+
+Achtung `Theory` Attribute
+
+</div>
 
 ' Testframeworks anbieten hier die Raw Test, DataSource, oder InlineData
 ' So können wir weiter treiben. Mühsam, kann immer noch nicht alles abgedeckt sein
@@ -134,8 +142,8 @@ Schon besser, aber...
 
 - Erlaubt sind nur primitive Typen (`string`, `int`, `double`, etc.)
 - Werte müssen vorberechnet werden
-- Immer noch nicht alle Werte Abgedeckt
-- Test coverage bleibt groß
+- Immer noch Stichproben - nicht alle Werte Abgedeckt
+- Test coverage % bleibt groß und uneffektiv
 
 ***
 
@@ -145,21 +153,18 @@ Schon besser, aber...
 - Kein "Neuland"
 - In Haskell seit 1990's [QuickCheck](https://wiki.haskell.org/Introduction_to_QuickCheck2)
 - Portiert in viele Programmiersprachen
-    - JS [JsVerify](https://github.com/jsverify/jsverify#documentation)
-    - .NET (F#, C#) [FsCheck](https://fscheck.github.io/FsCheck/)
-- Randomisierte Eingabe (100 mal)
+    <div class="fragment">- Python [Hypothesis](https://hypothesis.works)</div>
+    <div class="fragment">- JS [JsVerify](https://github.com/jsverify/jsverify#documentation)</div>
+    <div class="fragment">- .NET (F#, C#) [FsCheck](https://fscheck.github.io/FsCheck/)</div>
+
 
 ' Portierungen haben in allen bekannten Sprachen
 ' Mit ähnlichen Namen
 
 ---
 
-### Property-based tests
+### Was sind Properties
 
-Hier sind C# Properties
-
-<section>
-<p class="fragment roll-in">
 
     [lang=cs]
     public class MyProperties {
@@ -169,17 +174,17 @@ Hier sind C# Properties
         public int AnotherProperty { get; set; }
     }
 
-</p><p class="fragment roll-in">
-
-Nur diese haben damit nichts zu tun 😀
-
-</p></section>
+<div class="fragment">
+Achtung!..
+</div>
+<div class="fragment">
+C# Properties haben damit nichts zu tun 😀
+</div>
 
 ---
 
 ### Property
 
-"Ist die liste sortiert?"
 
     [lang=cs]
     var list = List<string> {
@@ -191,6 +196,11 @@ Nur diese haben damit nichts zu tun 😀
             Assert.LessThan(list[i], list[i+1]);
     }
 
+<div class="fragment">
+>"Ist die liste sortiert?" - JA/NEIN
+</div>
+
+
 ' grob gesagt Property ist nur eine funktion
 ' bool Rückgabe bedeutet ob es erfüllt ist
 
@@ -199,14 +209,20 @@ Nur diese haben damit nichts zu tun 😀
 ### Property
 
     [lang=cs]
-    [Fact]
+    [Fact] // [Theory]
     //[InlineData(list,orderedList)]
     public void MySortTest() {
-        var list = List<string> {
+        var input = List<string> {
             "Alles", "kann", "man", "nicht", "testen"
         };
-        Assert.Equal(list.OrderBy(x => x), MySort(list));
+        var expected = list.OrderBy(x => x).ToList();
+        var actual = MySort(input);
+        Assert.Equal(expected, actual);
     }
+
+<div class="fragment">
+- Eine Stichprobe
+</div>
 
 ' jetzt implementiere ich eine Sortierfuntkon und möchte die testen
 ' InlineData funktioniert mit Listen nicht
@@ -229,11 +245,10 @@ Nur diese haben damit nichts zu tun 😀
         }).QuickCheck("MySort");
     }
 
-<section><p class="fragment roll-in">
-
-Zwei Wege zum Ziel + Resultat vergleichen
-
-</p></section>
+- Automatische Generierung der zufälligen Eingabe
+    <div class="fragment">- Typ parameter bestimmt den gewünschten Eingabetyp.</div>
+    <div class="fragment">- 100 mal, Anzahl und Wertebereiche konfigurierbar</div>
+    <div class="fragment">- Zwei Wege zum Ziel vergleichen</div>
 
 ---
 
@@ -242,20 +257,24 @@ Zwei Wege zum Ziel + Resultat vergleichen
     [lang=cs]
     [Fact]
     public void JsonSerializerTest() {
-        Prop.ForAll<AlarmViewModel>(vm =>
-            vm.ToJson().FromJson<AlarmViewModel>() == vm
-            // in C# hier asserts pro Property nötig
-            // oder vm.ToJson() nur nicht in diesem Fall
+        Prop.ForAll<AlarmViewModel>(input =>
+            input.ToJson().FromJson<AlarmViewModel>() == input
+            // in C# leider Referenzvergleich
         ).QuickCheck("MySort");
     }
 
-Oder eine Schleife bauen (serializer, converter, o.Ä.)
+- ...Oder wenn keine Vorgage existiert
+    <div class="fragment">- Eine Schleife bauen</div>
+    <div class="fragment">- Serializer, converter, etc.</div>
 
 ' um zwei instanzen einer klasse zu vergleichen kann json verwendet werden
 
 ---
 
 ### Property
+
+##### Verhalten abgrenzen - für alle Eingaben keine Exceptions
+
 
     [lang=cs]
     [Fact]
@@ -266,19 +285,25 @@ Oder eine Schleife bauen (serializer, converter, o.Ä.)
         }).QuickCheck("MySort");
     }
 
+' ...Oder einfach prüfen dass controller keine Exceptions wirft
+
 ---
 
 ### FsCheck.XUnit
 
     [lang=cs]
-    [Property]
-    public void TicketPostTest(TicketViewModel ticket) {
+    using FsCheck.XUnit;
+
+    [Property] // <--- Property Attribute
+    public bool TicketPostTest(TicketViewModel ticket) {
         var controller = ...
         Assert.DoesNotThrow(() => controller.Post(ticket));
+        return true;
     }
 
-' es gibt unterstützung für Testframeworke, XUnit auch
-' PropertyAttribute
+<div class="fragment">- `Property` attribute</div>
+
+' es gibt unterstützung für NUnit und XUnit auch
 
 ---
 
@@ -326,6 +351,8 @@ Oder eine Schleife bauen (serializer, converter, o.Ä.)
 
 ### FsCheck generator
 
+Strings der gewünschten Länge generieren, z.B. für DB-Column
+
     [lang=cs]
     [Property]
     public bool SomeProviderTest1()
@@ -346,10 +373,8 @@ Oder eine Schleife bauen (serializer, converter, o.Ä.)
 
     [lang=cs]
     var arbAddress =
-        from city in Arb.Generate<string>()
-                        .Where(s.Length <= 50)
-        from street in Arb.Generate<string>()
-                          .Where(s.Length <= 50)
+        from city in str50
+        from street in str100
         select (city, street);
 
     Prop.ForAll(arbAddress, (city, street) =>
@@ -378,7 +403,7 @@ Oder eine Schleife bauen (serializer, converter, o.Ä.)
     ...
 
     Arb.Register<TicketBodyGenerator>();
-    Prop.ForAll((Ticket t) => {
+    Prop.ForAll((ITicketBody body) => {
         ...
         });
 
@@ -386,8 +411,10 @@ Oder eine Schleife bauen (serializer, converter, o.Ä.)
 
 ### FsCheck Links
 
-- [Dokumentation](https://fscheck.github.io/FsCheck/)
+- [Dokumentation](https://fscheck.github.io/FsCheck/) - https://fscheck.github.io/FsCheck/
 - [Code Beispiele in C# und F#](https://github.com/fscheck/FsCheck/tree/master/examples)
+
+- [Diese Folien](vilinski.github.io/presentations/2019/FsCheck)  - vilinski.github.io/presentations/2019/FsCheck
 - [FsReveal](http://fsprojects.github.io/FsReveal/)
     - [Reveal.js](https://revealjs.com/#/)
     - [Markdown](https://de.wikipedia.org/wiki/Markdown)
