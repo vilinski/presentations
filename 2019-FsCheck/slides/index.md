@@ -392,3 +392,22 @@ Oder eine Schleife bauen (serializer, converter, o.Ä.)
     - [Reveal.js](https://revealjs.com/#/)
     - [Markdown](https://de.wikipedia.org/wiki/Markdown)
     - [F#](https://fsharpforfunandprofit.com)
+
+***
+
+# Questions?
+
+<table>
+<tr><td>
+
+![Donald Knut](./images/donald.knuth.jpg)
+
+</td><td>
+
+> Beware of bugs in the above code; I have only proved it correct, not tried it.
+
+Donald Knuth
+
+</td></tr>
+</table>
+
