@@ -2,7 +2,7 @@
 - description : Introduction to FsCheck
 - author : Andreas Vilinski
 - theme : night
-- transition : none
+- transition : slide
 
 ***
 
@@ -170,7 +170,7 @@ Schon besser, aber...
     public class MyProperties {
         public Guid Id { get; set; }
         public string StringProperty { get; set; }
-        public int AnotherProperty { get; set; }
+        public int OtherProperty { get; set; }
         public int AnotherProperty { get; set; }
     }
 
@@ -371,6 +371,8 @@ Strings der gewünschten Länge generieren, z.B. für DB-Column
 
 ### FsCheck generator
 
+Mehrerer Generatoren in einen kombinieren
+
     [lang=cs]
     var arbAddress =
         from city in str50
@@ -387,6 +389,8 @@ Strings der gewünschten Länge generieren, z.B. für DB-Column
 
 ### FsCheck generator
 
+Eigenen Generator registrieren, z.B. für abgeleitetet Klassen
+
     [lang=cs]
     public class TicketBodyGenerator
     {
@@ -402,7 +406,7 @@ Strings der gewünschten Länge generieren, z.B. für DB-Column
 
     ...
 
-    Arb.Register<TicketBodyGenerator>();
+    Arb.Register<TicketBodyGenerator>(); // <-- vor der Benutzung aufrufen
     Prop.ForAll((ITicketBody body) => {
         ...
         });
