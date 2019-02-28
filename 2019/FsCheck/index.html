@@ -284,7 +284,7 @@ Mit ähnlichen Namen<br/>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="cs"><span class="k">public</span> <span class="k">class</span> MyProperties {
     <span class="k">public</span> Guid Id { get; set; }
     <span class="k">public</span> <span class="k">string</span> StringProperty { get; set; }
-    <span class="k">public</span> <span class="k">int</span> AnotherProperty { get; set; }
+    <span class="k">public</span> <span class="k">int</span> OtherProperty { get; set; }
     <span class="k">public</span> <span class="k">int</span> AnotherProperty { get; set; }
 }
 </code></pre></td></tr></table>
@@ -566,6 +566,7 @@ es gibt unterstützung für NUnit und XUnit auch<br/>
 </section>
 <section >
 <h3>FsCheck generator</h3>
+<p>Mehrerer Generatoren in einen kombinieren</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
 <span class="l"> 2: </span>
 <span class="l"> 3: </span>
@@ -591,6 +592,7 @@ Prop.ForAll(arbAddress, (city, street) <span class="o">=</span><span class="o">&
 </section>
 <section >
 <h3>FsCheck generator</h3>
+<p>Eigenen Generator registrieren, z.B. für abgeleitetet Klassen</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
 <span class="l"> 2: </span>
 <span class="l"> 3: </span>
@@ -624,7 +626,7 @@ Prop.ForAll(arbAddress, (city, street) <span class="o">=</span><span class="o">&
 
 <span class="o">.</span><span class="o">.</span><span class="o">.</span>
 
-Arb.Register&lt;TicketBodyGenerator&gt;();
+Arb.Register&lt;TicketBodyGenerator&gt;(); <span class="c">// &lt;-- vor der Benutzung aufrufen</span>
 Prop.ForAll((ITicketBody body) <span class="o">=</span><span class="o">&gt;</span> {
     <span class="o">.</span><span class="o">.</span><span class="o">.</span>
     });
@@ -647,6 +649,19 @@ Prop.ForAll((ITicketBody body) <span class="o">=</span><span class="o">&gt;</spa
 </ul>
 </section>
 </section>
+<section >
+<h1>Questions?</h1>
+<table>
+<tr><td>
+<p><img src="./images/donald.knuth.jpg" alt="Donald Knut" /></p>
+</td><td>
+<blockquote>
+<p>Beware of bugs in the above code; I have only proved it correct, not tried it.</p>
+</blockquote>
+<p>Donald Knuth</p>
+</td></tr>
+</table>
+</section>
 
 
         </div>
@@ -665,7 +680,7 @@ Prop.ForAll((ITicketBody body) <span class="o">=</span><span class="o">&gt;</spa
             history: true,
             center: true,
 
-            transition: 'none', // default/cube/page/concave/zoom/linear/fade/none
+            transition: 'slide', // default/cube/page/concave/zoom/linear/fade/none
 
             // Parallax scrolling
             // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
