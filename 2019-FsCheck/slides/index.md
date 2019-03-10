@@ -157,14 +157,16 @@ Schon besser, aber...
     <div class="fragment">- JS [JsVerify](https://github.com/jsverify/jsverify#documentation)</div>
     <div class="fragment">- .NET (F#, C#) [FsCheck](https://fscheck.github.io/FsCheck/)</div>
 
+    - JS [JsVerify](https://github.com/jsverify/jsverify#documentation)
+    - .NET (F#, C#) [FsCheck](https://fscheck.github.io/FsCheck/)
+- Zufällige Eingabe (100 mal) -> Test -> Shrink
 
 ' Portierungen haben in allen bekannten Sprachen
 ' Mit ähnlichen Namen
 
 ---
 
-### Was sind Properties
-
+### Was sind Properties?
 
     [lang=cs]
     public class MyProperties {
@@ -185,7 +187,6 @@ C# Properties haben damit nichts zu tun 😀
 
 ### Property
 
-
     [lang=cs]
     var list = List<string> {
         "Alles", "kann", "man", "nicht", "testen"
@@ -200,13 +201,12 @@ C# Properties haben damit nichts zu tun 😀
 >"Ist die liste sortiert?" - JA/NEIN
 </div>
 
-
 ' grob gesagt Property ist nur eine funktion
 ' bool Rückgabe bedeutet ob es erfüllt ist
 
 ---
 
-### Property
+### Kein Property Test
 
     [lang=cs]
     [Fact] // [Theory]
@@ -220,16 +220,15 @@ C# Properties haben damit nichts zu tun 😀
         Assert.Equal(expected, actual);
     }
 
-<div class="fragment">
-- Eine Stichprobe
-</div>
+<div class="fragment">Nur <b>EINE</b> Stichprobe</div>
 
 ' jetzt implementiere ich eine Sortierfuntkon und möchte die testen
 ' InlineData funktioniert mit Listen nicht
+' Nut ein Test
 
 ---
 
-### Property
+### Property test
 
     [lang=cs]
     using FsCheck;
@@ -245,10 +244,14 @@ C# Properties haben damit nichts zu tun 😀
         }).QuickCheck("MySort");
     }
 
-- Automatische Generierung der zufälligen Eingabe
-    <div class="fragment">- Typ parameter bestimmt den gewünschten Eingabetyp.</div>
-    <div class="fragment">- 100 mal, Anzahl und Wertebereiche konfigurierbar</div>
-    <div class="fragment">- Zwei Wege zum Ziel vergleichen</div>
+zwei verschiedenen Wege zum Ziel:
+
+- __Typ parameter__ bestimmt den gewünschten Eingabetyp
+- __Generator__ - generiert zufällige Eingabe, konfigurierbar
+- __Test__ - 100 mal, Anzahl konfigurierbar
+- __Shrink__ - minimale Fehlerbedinung finden
+
+' eine der Strategien zum Wahl der Property für Test
 
 ---
 
@@ -263,18 +266,16 @@ C# Properties haben damit nichts zu tun 😀
         ).QuickCheck("MySort");
     }
 
-- ...Oder wenn keine Vorgage existiert
+- ... wenn keine Vorgabe existiert
+    <div class="fragment">- Z.B. Serializer, Daten-, Format-Converter, etc.</div>
     <div class="fragment">- Eine Schleife bauen</div>
-    <div class="fragment">- Serializer, converter, etc.</div>
+    <div class="fragment">- Eingabe und Ausgabe vergleichen</div>
 
 ' um zwei instanzen einer klasse zu vergleichen kann json verwendet werden
 
 ---
 
 ### Property
-
-##### Verhalten abgrenzen - für alle Eingaben keine Exceptions
-
 
     [lang=cs]
     [Fact]
@@ -285,11 +286,13 @@ C# Properties haben damit nichts zu tun 😀
         }).QuickCheck("MySort");
     }
 
+Verhalten abgrenzen - für alle Eingaben keine Exceptions
+
 ' ...Oder einfach prüfen dass controller keine Exceptions wirft
 
 ---
 
-### FsCheck.XUnit
+### FsCheck - Testframeworks
 
     [lang=cs]
     using FsCheck.XUnit;
@@ -301,13 +304,18 @@ C# Properties haben damit nichts zu tun 😀
         return true;
     }
 
-<div class="fragment">- `Property` attribute</div>
+
+- NUnit
+- XUnit
+- Expecto
+- ...
+
 
 ' es gibt unterstützung für NUnit und XUnit auch
 
 ---
 
-### FsCheck.XUnit
+### FsCheck - Testausgabe
 
     [lang=cs]
     [Property]
@@ -413,10 +421,29 @@ Eigenen Generator registrieren, z.B. für abgeleitetet Klassen
 
 ---
 
+### Property Shrink
+
+    [lang=cs]
+    [Property]
+    public bool StringToLowerMakesEveryCharLower(string input)
+    {
+        return input.ToLower().All(c => Char.IsLower(c));
+    }
+
+<div class="fragment">
+
+![Shrink](./images/shrink.png)
+
+</div>
+' hier ist ein beispiel das FsCheck nicht intuitive Fehler finden kann
+
+---
+
 ### FsCheck Links
 
 - [Dokumentation](https://fscheck.github.io/FsCheck/) - https://fscheck.github.io/FsCheck/
 - [Code Beispiele in C# und F#](https://github.com/fscheck/FsCheck/tree/master/examples)
+- [Choosing properties](https://fsharpforfunandprofit.com/posts/property-based-testing-2/)
 
 - [Diese Folien](vilinski.github.io/presentations/2019/FsCheck)  - vilinski.github.io/presentations/2019/FsCheck
 - [FsReveal](http://fsprojects.github.io/FsReveal/)
