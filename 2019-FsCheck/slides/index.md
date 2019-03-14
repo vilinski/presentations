@@ -12,11 +12,17 @@
 
 ## Test Coverage
 
-![coverage badge](./images/coverage-badge.png)
+![coverage alarmmanagement](./images/coverage-alarmmanagement.png)
 
 ' Coverage badge bei uns in jedem Projekt
 ' Einerseits - Lakmuspapier, andererseits nutzlos
 ' TestCoverage testet nur die Fleiß der Tester, nicht die Korrektheit
+
+---
+
+## Test Coverage
+
+![coverage minicover](./images/coverage-minicover.png)
 
 ---
 
@@ -29,18 +35,16 @@
 ### Test Coverage ~0 %
 
     [lang=cs]
-    public class Useless
-    {
-        public static List<(char, int)> Get5TopFrequentChars(
-            string text)
-        {
+    public class Useless {
+        public static List<(string, int)> GetTop5Word(string txt) {
             return string.IsNullOrEmpty(text)
-                ? new List<(char, int)>()
-                : text.GroupBy(x => x)
-                    .Select(g => (g.Key, g.Count()))
-                    .OrderByDescending(x => x.Item2)
-                    .Take(5)
-                    .ToList();
+                ? new List<Tuple<string, int>>()
+                : txt.Split(" ")
+                     .GroupBy(x => x)
+                     .Select(x => (x.Key, x.Count()))
+                     .OrderByDescending(x => x.Item2)
+                     .Take(5)
+                     .ToList();
         }
     }
     public class UselessTests {
@@ -80,7 +84,7 @@
 
 ---
 
-### More tests
+### Mehr Tests
 
     [lang=cs]
     public class UselessTests
@@ -127,7 +131,7 @@
 
 <div class="fragment">
 
-Achtung `Theory` Attribute
+Attribute <del>Fact</del> `Theory`
 
 </div>
 
@@ -143,7 +147,7 @@ Schon besser, aber...
 - Erlaubt sind nur primitive Typen (`string`, `int`, `double`, etc.)
 - Werte müssen vorberechnet werden
 - Immer noch Stichproben - nicht alle Werte Abgedeckt
-- Test coverage % bleibt groß und uneffektiv
+- Test coverage % bleibt groß und ineffektiv
 
 ***
 
@@ -155,14 +159,11 @@ Schon besser, aber...
 - Portiert in viele Programmiersprachen
     <div class="fragment">- Python [Hypothesis](https://hypothesis.works)</div>
     <div class="fragment">- JS [JsVerify](https://github.com/jsverify/jsverify#documentation)</div>
-    <div class="fragment">- .NET (F#, C#) [FsCheck](https://fscheck.github.io/FsCheck/)</div>
-
-    - JS [JsVerify](https://github.com/jsverify/jsverify#documentation)
-    - .NET (F#, C#) [FsCheck](https://fscheck.github.io/FsCheck/)
-- Zufällige Eingabe (100 mal) -> Test -> Shrink
+    <div class="fragment">- .NET (F#, C#) [FsCheck](https://fscheck.github.io/FsCheck/), [Hedgehog](https://github.com/hedgehogqa), ...</div>
 
 ' Portierungen haben in allen bekannten Sprachen
 ' Mit ähnlichen Namen
+' Für .NET wird ein paar Seiten später FsCheck gezeigt
 
 ---
 
@@ -177,7 +178,7 @@ Schon besser, aber...
     }
 
 <div class="fragment">
-Achtung!..
+<b>Aber Achtung!</b> ...
 </div>
 <div class="fragment">
 C# Properties haben damit nichts zu tun 😀
@@ -193,8 +194,12 @@ C# Properties haben damit nichts zu tun 😀
     };
 
     public bool IsOrdered(List<string> list) {
+        if (list.Count < 2)
+            return true;
         for(var i; i++; i < list.Count - 1)
-            Assert.LessThan(list[i], list[i+1]);
+            if (list[i] > list[i+1])
+                return false;
+        return true;
     }
 
 <div class="fragment">
@@ -206,12 +211,13 @@ C# Properties haben damit nichts zu tun 😀
 
 ---
 
-### Kein Property Test
+### __Kein__ Property Test
 
     [lang=cs]
     [Fact] // [Theory]
     //[InlineData(list,orderedList)]
-    public void MySortTest() {
+    public void MySortTest()
+    {
         var input = List<string> {
             "Alles", "kann", "man", "nicht", "testen"
         };
@@ -228,7 +234,16 @@ C# Properties haben damit nichts zu tun 😀
 
 ---
 
-### Property test
+### Property Test
+
+- __Typ parameter__ bestimmt den gewünschten Eingabetyp
+- __Generator__ - generiert zufällige Eingabe, konfigurierbar
+- __Test__ - 100 mal, Anzahl konfigurierbar
+- __Shrink__ - minimale Fehlerbedinung finden
+
+---
+
+### Property Test Beispiel
 
     [lang=cs]
     using FsCheck;
@@ -245,11 +260,6 @@ C# Properties haben damit nichts zu tun 😀
     }
 
 zwei verschiedenen Wege zum Ziel:
-
-- __Typ parameter__ bestimmt den gewünschten Eingabetyp
-- __Generator__ - generiert zufällige Eingabe, konfigurierbar
-- __Test__ - 100 mal, Anzahl konfigurierbar
-- __Shrink__ - minimale Fehlerbedinung finden
 
 ' eine der Strategien zum Wahl der Property für Test
 
@@ -357,7 +367,7 @@ Verhalten abgrenzen - für alle Eingaben keine Exceptions
 
 ---
 
-### FsCheck generator
+### FsCheck Generator
 
 Strings der gewünschten Länge generieren, z.B. für DB-Column
 
@@ -370,16 +380,17 @@ Strings der gewünschten Länge generieren, z.B. für DB-Column
             .Where(s => s != null && s.Length <= 50);
         Prop.ForAll(str50, description =>
         {
-            var isSet = alarmProvider.SetDescription(alarmId, description);
+            var isSet = alarmProvider
+                .SetDescription(alarmId, description);
             Assert.True(isSet);
         }).QuickCheckThrowOnFailure();
     }
 
 ---
 
-### FsCheck generator
+### FsCheck Generator
 
-Mehrerer Generatoren in einen kombinieren
+Mehrere Test-Generatoren in einen kombinieren
 
     [lang=cs]
     var arbAddress =
@@ -395,7 +406,7 @@ Mehrerer Generatoren in einen kombinieren
 
 ---
 
-### FsCheck generator
+### FsCheck Generator
 
 Eigenen Generator registrieren, z.B. für abgeleitetet Klassen
 
@@ -411,13 +422,9 @@ Eigenen Generator registrieren, z.B. für abgeleitetet Klassen
             return Arb.From(gen);
         }
     }
-
     ...
-
-    Arb.Register<TicketBodyGenerator>(); // <-- vor der Benutzung aufrufen
-    Prop.ForAll((ITicketBody body) => {
-        ...
-        });
+    Arb.Register<TicketBodyGenerator>(); // <-- vor der Benutzung
+    Prop.ForAll((ITicketBody body) => { ... });
 
 ---
 
@@ -435,21 +442,17 @@ Eigenen Generator registrieren, z.B. für abgeleitetet Klassen
 ![Shrink](./images/shrink.png)
 
 </div>
+
 ' hier ist ein beispiel das FsCheck nicht intuitive Fehler finden kann
 
 ---
 
-### FsCheck Links
+### Links
 
-- [Dokumentation](https://fscheck.github.io/FsCheck/) - https://fscheck.github.io/FsCheck/
+- [FsCheck](https://fscheck.github.io/FsCheck/) - fscheck.github.io/FsCheck/
 - [Code Beispiele in C# und F#](https://github.com/fscheck/FsCheck/tree/master/examples)
 - [Choosing properties](https://fsharpforfunandprofit.com/posts/property-based-testing-2/)
-
 - [Diese Folien](vilinski.github.io/presentations/2019/FsCheck)  - vilinski.github.io/presentations/2019/FsCheck
-- [FsReveal](http://fsprojects.github.io/FsReveal/)
-    - [Reveal.js](https://revealjs.com/#/)
-    - [Markdown](https://de.wikipedia.org/wiki/Markdown)
-    - [F#](https://fsharpforfunandprofit.com)
 
 ***
 
