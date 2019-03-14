@@ -55,12 +55,16 @@
 <section >
 <section >
 <h2>Test Coverage</h2>
-<p><img src="./images/coverage-badge.png" alt="coverage badge" /></p>
+<p><img src="./images/coverage-alarmmanagement.png" alt="coverage alarmmanagement" /></p>
 <aside class="notes">
 Coverage badge bei uns in jedem Projekt<br/>
 Einerseits - Lakmuspapier, andererseits nutzlos<br/>
 TestCoverage testet nur die Fleiß der Tester, nicht die Korrektheit<br/>
 </aside>
+</section>
+<section >
+<h2>Test Coverage</h2>
+<p><img src="./images/coverage-minicover.png" alt="coverage minicover" /></p>
 </section>
 <section >
 <h2>Test Coverage</h2>
@@ -86,21 +90,17 @@ TestCoverage testet nur die Fleiß der Tester, nicht die Korrektheit<br/>
 <span class="l">16: </span>
 <span class="l">17: </span>
 <span class="l">18: </span>
-<span class="l">19: </span>
-<span class="l">20: </span>
 </pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="cs"><span class="k">public</span> <span class="k">class</span> Useless
-{
-    <span class="k">public</span> <span class="k">static</span> List&lt;(<span class="k">char</span>, <span class="k">int</span>)<span class="o">&gt;</span> Get<span class="n">5</span>TopFrequentChars(
-        <span class="k">string</span> text)
-    {
+<td class="snippet"><pre class="fssnip highlighted"><code lang="cs"><span class="k">public</span> <span class="k">class</span> Useless {
+    <span class="k">public</span> <span class="k">static</span> List&lt;(<span class="k">string</span>, <span class="k">int</span>)<span class="o">&gt;</span> GetTop<span class="n">5</span>Word(<span class="k">string</span> txt) {
         <span class="k">return</span> <span class="k">string</span>.IsNullOrEmpty(text)
-            <span class="o">?</span> <span class="k">new</span> List&lt;(<span class="k">char</span>, <span class="k">int</span>)<span class="o">&gt;</span>()
-            <span class="o">:</span> text.GroupBy(x <span class="o">=</span><span class="o">&gt;</span> x)
-                .Select(g <span class="o">=</span><span class="o">&gt;</span> (g.Key, g.Count()))
-                .OrderByDescending(x <span class="o">=</span><span class="o">&gt;</span> x.Item<span class="n">2</span>)
-                .Take(<span class="n">5</span>)
-                .ToList();
+            <span class="o">?</span> <span class="k">new</span> List&lt;Tuple&lt;<span class="k">string</span>, <span class="k">int</span>&gt;<span class="o">&gt;</span>()
+            <span class="o">:</span> txt.Split(<span class="s">" "</span>)
+                 .GroupBy(x <span class="o">=</span><span class="o">&gt;</span> x)
+                 .Select(x <span class="o">=</span><span class="o">&gt;</span> (x.Key, x.Count()))
+                 .OrderByDescending(x <span class="o">=</span><span class="o">&gt;</span> x.Item<span class="n">2</span>)
+                 .Take(<span class="n">5</span>)
+                 .ToList();
     }
 }
 <span class="k">public</span> <span class="k">class</span> UselessTests {
@@ -157,7 +157,7 @@ braucht mehr als einen Test-Input<br/>
 </aside>
 </section>
 <section >
-<h3>More tests</h3>
+<h3>Mehr Tests</h3>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
 <span class="l"> 2: </span>
 <span class="l"> 3: </span>
@@ -235,7 +235,7 @@ wird durch copy/paste gelöst, was die tests brüchig macht<br/>
 }
 </code></pre></td></tr></table>
 <div class="fragment">
-<p>Achtung <code>Theory</code> Attribute</p>
+<p>Attribute <del>Fact</del> <code>Theory</code></p>
 </div>
 <aside class="notes">
 Testframeworks anbieten hier die Raw Test, DataSource, oder InlineData<br/>
@@ -249,7 +249,7 @@ So können wir weiter treiben. Mühsam, kann immer noch nicht alles abgedeckt se
 <li>Erlaubt sind nur primitive Typen (<code>string</code>, <code>int</code>, <code>double</code>, etc.)</li>
 <li>Werte müssen vorberechnet werden</li>
 <li>Immer noch Stichproben - nicht alle Werte Abgedeckt</li>
-<li>Test coverage % bleibt groß und uneffektiv</li>
+<li>Test coverage % bleibt groß und ineffektiv</li>
 </ul>
 </section>
 </section>
@@ -264,16 +264,17 @@ So können wir weiter treiben. Mühsam, kann immer noch nicht alles abgedeckt se
 Portiert in viele Programmiersprachen
 <div class="fragment">- Python <a href="https://hypothesis.works">Hypothesis</a></div>
 <div class="fragment">- JS <a href="https://github.com/jsverify/jsverify#documentation">JsVerify</a></div>
-<div class="fragment">- .NET (F#, C#) <a href="https://fscheck.github.io/FsCheck/">FsCheck</a></div>
+<div class="fragment">- .NET (F#, C#) <a href="https://fscheck.github.io/FsCheck/">FsCheck</a>, <a href="https://github.com/hedgehogqa">Hedgehog</a>, ...</div>
 </li>
 </ul>
 <aside class="notes">
 Portierungen haben in allen bekannten Sprachen<br/>
 Mit ähnlichen Namen<br/>
+Für .NET wird ein paar Seiten später FsCheck gezeigt<br/>
 </aside>
 </section>
 <section >
-<h3>Was sind Properties</h3>
+<h3>Was sind Properties?</h3>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 <span class="l">2: </span>
 <span class="l">3: </span>
@@ -289,41 +290,11 @@ Mit ähnlichen Namen<br/>
 }
 </code></pre></td></tr></table>
 <div class="fragment">
-Achtung!..
+<b>Aber Achtung!</b> ...
 </div>
 <div class="fragment">
 C# Properties haben damit nichts zu tun 😀
 </div>
-</section>
-<section >
-<h3>Property</h3>
-<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
-<span class="l">2: </span>
-<span class="l">3: </span>
-<span class="l">4: </span>
-<span class="l">5: </span>
-<span class="l">6: </span>
-<span class="l">7: </span>
-<span class="l">8: </span>
-</pre></td>
-<td class="snippet"><pre class="fssnip highlighted"><code lang="cs"><span class="k">var</span> list <span class="o">=</span> List&lt;<span class="k">string</span>&gt; {
-    <span class="s">"Alles"</span>, <span class="s">"kann"</span>, <span class="s">"man"</span>, <span class="s">"nicht"</span>, <span class="s">"testen"</span>
-};
-
-<span class="k">public</span> <span class="k">bool</span> IsOrdered(List&lt;<span class="k">string</span>&gt; list) {
-    <span class="k">for</span>(<span class="k">var</span> i; i+<span class="o">+</span>; i <span class="o">&lt;</span> list.Count <span class="o">-</span> <span class="n">1</span>)
-        Assert.LessThan(list[i], list[i<span class="n">+1</span>]);
-}
-</code></pre></td></tr></table>
-<div class="fragment">
-<blockquote>
-<p>"Ist die liste sortiert?" - JA/NEIN
-</div></p>
-</blockquote>
-<aside class="notes">
-grob gesagt Property ist nur eine funktion<br/>
-bool Rückgabe bedeutet ob es erfüllt ist<br/>
-</aside>
 </section>
 <section >
 <h3>Property</h3>
@@ -337,10 +308,50 @@ bool Rückgabe bedeutet ob es erfüllt ist<br/>
 <span class="l"> 8: </span>
 <span class="l"> 9: </span>
 <span class="l">10: </span>
+<span class="l">11: </span>
+<span class="l">12: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="cs"><span class="k">var</span> list <span class="o">=</span> List&lt;<span class="k">string</span>&gt; {
+    <span class="s">"Alles"</span>, <span class="s">"kann"</span>, <span class="s">"man"</span>, <span class="s">"nicht"</span>, <span class="s">"testen"</span>
+};
+
+<span class="k">public</span> <span class="k">bool</span> IsOrdered(List&lt;<span class="k">string</span>&gt; list) {
+    <span class="k">if</span> (list.Count <span class="o">&lt;</span> <span class="n">2</span>)
+        <span class="k">return</span> <span class="k">true</span>;
+    <span class="k">for</span>(<span class="k">var</span> i; i+<span class="o">+</span>; i <span class="o">&lt;</span> list.Count <span class="o">-</span> <span class="n">1</span>)
+        <span class="k">if</span> (list[i] <span class="o">&gt;</span> list[i<span class="n">+1</span>])
+            <span class="k">return</span> <span class="k">false</span>;
+    <span class="k">return</span> <span class="k">true</span>;
+}
+</code></pre></td></tr></table>
+<div class="fragment">
+<blockquote>
+<p>"Ist die liste sortiert?" - JA/NEIN
+</div></p>
+</blockquote>
+<aside class="notes">
+grob gesagt Property ist nur eine funktion<br/>
+bool Rückgabe bedeutet ob es erfüllt ist<br/>
+</aside>
+</section>
+<section >
+<h3><strong>Kein</strong> Property Test</h3>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
+<span class="l"> 2: </span>
+<span class="l"> 3: </span>
+<span class="l"> 4: </span>
+<span class="l"> 5: </span>
+<span class="l"> 6: </span>
+<span class="l"> 7: </span>
+<span class="l"> 8: </span>
+<span class="l"> 9: </span>
+<span class="l">10: </span>
+<span class="l">11: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="cs">[Fact] <span class="c">// [Theory]</span>
 <span class="c">//[InlineData(list,orderedList)]</span>
-<span class="k">public</span> <span class="k">void</span> MySortTest() {
+<span class="k">public</span> <span class="k">void</span> MySortTest()
+{
     <span class="k">var</span> input <span class="o">=</span> List&lt;<span class="k">string</span>&gt; {
         <span class="s">"Alles"</span>, <span class="s">"kann"</span>, <span class="s">"man"</span>, <span class="s">"nicht"</span>, <span class="s">"testen"</span>
     };
@@ -349,16 +360,24 @@ bool Rückgabe bedeutet ob es erfüllt ist<br/>
     Assert.Equal(expected, actual);
 }
 </code></pre></td></tr></table>
-<div class="fragment">
-- Eine Stichprobe
-</div>
+<div class="fragment">Nur <b>EINE</b> Stichprobe</div>
 <aside class="notes">
 jetzt implementiere ich eine Sortierfuntkon und möchte die testen<br/>
 InlineData funktioniert mit Listen nicht<br/>
+Nut ein Test<br/>
 </aside>
 </section>
 <section >
-<h3>Property</h3>
+<h3>Property Test</h3>
+<ul>
+<li><strong>Typ parameter</strong> bestimmt den gewünschten Eingabetyp</li>
+<li><strong>Generator</strong> - generiert zufällige Eingabe, konfigurierbar</li>
+<li><strong>Test</strong> - 100 mal, Anzahl konfigurierbar</li>
+<li><strong>Shrink</strong> - minimale Fehlerbedinung finden</li>
+</ul>
+</section>
+<section >
+<h3>Property Test Beispiel</h3>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
 <span class="l"> 2: </span>
 <span class="l"> 3: </span>
@@ -385,14 +404,10 @@ InlineData funktioniert mit Listen nicht<br/>
     }).QuickCheck(<span class="s">"MySort"</span>);
 }
 </code></pre></td></tr></table>
-<ul>
-<li>
-Automatische Generierung der zufälligen Eingabe
-<div class="fragment">- Typ parameter bestimmt den gewünschten Eingabetyp.</div>
-<div class="fragment">- 100 mal, Anzahl und Wertebereiche konfigurierbar</div>
-<div class="fragment">- Zwei Wege zum Ziel vergleichen</div>
-</li>
-</ul>
+<p>zwei verschiedenen Wege zum Ziel:</p>
+<aside class="notes">
+eine der Strategien zum Wahl der Property für Test<br/>
+</aside>
 </section>
 <section >
 <h3>Property</h3>
@@ -414,9 +429,10 @@ Automatische Generierung der zufälligen Eingabe
 </code></pre></td></tr></table>
 <ul>
 <li>
-...Oder wenn keine Vorgage existiert
+... wenn keine Vorgabe existiert
+<div class="fragment">- Z.B. Serializer, Daten-, Format-Converter, etc.</div>
 <div class="fragment">- Eine Schleife bauen</div>
-<div class="fragment">- Serializer, converter, etc.</div>
+<div class="fragment">- Eingabe und Ausgabe vergleichen</div>
 </li>
 </ul>
 <aside class="notes">
@@ -425,7 +441,6 @@ um zwei instanzen einer klasse zu vergleichen kann json verwendet werden<br/>
 </section>
 <section >
 <h3>Property</h3>
-<h5>Verhalten abgrenzen - für alle Eingaben keine Exceptions</h5>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 <span class="l">2: </span>
 <span class="l">3: </span>
@@ -442,12 +457,13 @@ um zwei instanzen einer klasse zu vergleichen kann json verwendet werden<br/>
     }).QuickCheck(<span class="s">"MySort"</span>);
 }
 </code></pre></td></tr></table>
+<p>Verhalten abgrenzen - für alle Eingaben keine Exceptions</p>
 <aside class="notes">
 ...Oder einfach prüfen dass controller keine Exceptions wirft<br/>
 </aside>
 </section>
 <section >
-<h3>FsCheck.XUnit</h3>
+<h3>FsCheck - Testframeworks</h3>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 <span class="l">2: </span>
 <span class="l">3: </span>
@@ -466,13 +482,18 @@ um zwei instanzen einer klasse zu vergleichen kann json verwendet werden<br/>
     <span class="k">return</span> <span class="k">true</span>;
 }
 </code></pre></td></tr></table>
-<div class="fragment">- `Property` attribute</div>
+<ul>
+<li>NUnit</li>
+<li>XUnit</li>
+<li>Expecto</li>
+<li>...</li>
+</ul>
 <aside class="notes">
 es gibt unterstützung für NUnit und XUnit auch<br/>
 </aside>
 </section>
 <section >
-<h3>FsCheck.XUnit</h3>
+<h3>FsCheck - Testausgabe</h3>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
 <span class="l">2: </span>
 <span class="l">3: </span>
@@ -535,7 +556,7 @@ es gibt unterstützung für NUnit und XUnit auch<br/>
 </code></pre></td></tr></table>
 </section>
 <section >
-<h3>FsCheck generator</h3>
+<h3>FsCheck Generator</h3>
 <p>Strings der gewünschten Länge generieren, z.B. für DB-Column</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
 <span class="l"> 2: </span>
@@ -549,6 +570,7 @@ es gibt unterstützung für NUnit und XUnit auch<br/>
 <span class="l">10: </span>
 <span class="l">11: </span>
 <span class="l">12: </span>
+<span class="l">13: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="cs">[Property]
 <span class="k">public</span> <span class="k">bool</span> SomeProviderTest<span class="n">1</span>()
@@ -558,15 +580,16 @@ es gibt unterstützung für NUnit und XUnit auch<br/>
         .Where(s <span class="o">=</span><span class="o">&gt;</span> s <span class="o">!</span><span class="o">=</span> <span class="k">null</span> <span class="o">&amp;</span><span class="o">&amp;</span> s.Length <span class="o">&lt;</span><span class="o">=</span> <span class="n">50</span>);
     Prop.ForAll(str<span class="n">50</span>, description <span class="o">=</span><span class="o">&gt;</span>
     {
-        <span class="k">var</span> isSet <span class="o">=</span> alarmProvider.SetDescription(alarmId, description);
+        <span class="k">var</span> isSet <span class="o">=</span> alarmProvider
+            .SetDescription(alarmId, description);
         Assert.True(isSet);
     }).QuickCheckThrowOnFailure();
 }
 </code></pre></td></tr></table>
 </section>
 <section >
-<h3>FsCheck generator</h3>
-<p>Mehrerer Generatoren in einen kombinieren</p>
+<h3>FsCheck Generator</h3>
+<p>Mehrere Test-Generatoren in einen kombinieren</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
 <span class="l"> 2: </span>
 <span class="l"> 3: </span>
@@ -591,7 +614,7 @@ Prop.ForAll(arbAddress, (city, street) <span class="o">=</span><span class="o">&
 </code></pre></td></tr></table>
 </section>
 <section >
-<h3>FsCheck generator</h3>
+<h3>FsCheck Generator</h3>
 <p>Eigenen Generator registrieren, z.B. für abgeleitetet Klassen</p>
 <table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l"> 1: </span>
 <span class="l"> 2: </span>
@@ -607,10 +630,6 @@ Prop.ForAll(arbAddress, (city, street) <span class="o">=</span><span class="o">&
 <span class="l">12: </span>
 <span class="l">13: </span>
 <span class="l">14: </span>
-<span class="l">15: </span>
-<span class="l">16: </span>
-<span class="l">17: </span>
-<span class="l">18: </span>
 </pre></td>
 <td class="snippet"><pre class="fssnip highlighted"><code lang="cs"><span class="k">public</span> <span class="k">class</span> TicketBodyGenerator
 {
@@ -623,29 +642,39 @@ Prop.ForAll(arbAddress, (city, street) <span class="o">=</span><span class="o">&
         <span class="k">return</span> Arb.From(gen);
     }
 }
-
 <span class="o">.</span><span class="o">.</span><span class="o">.</span>
-
-Arb.Register&lt;TicketBodyGenerator&gt;(); <span class="c">// &lt;-- vor der Benutzung aufrufen</span>
-Prop.ForAll((ITicketBody body) <span class="o">=</span><span class="o">&gt;</span> {
-    <span class="o">.</span><span class="o">.</span><span class="o">.</span>
-    });
+Arb.Register&lt;TicketBodyGenerator&gt;(); <span class="c">// &lt;-- vor der Benutzung</span>
+Prop.ForAll((ITicketBody body) <span class="o">=</span><span class="o">&gt;</span> { <span class="o">.</span><span class="o">.</span><span class="o">.</span> });
 </code></pre></td></tr></table>
 </section>
 <section >
-<h3>FsCheck Links</h3>
+<h3>Property Shrink</h3>
+<table class="pre"><tr><td class="lines"><pre class="fssnip"><span class="l">1: </span>
+<span class="l">2: </span>
+<span class="l">3: </span>
+<span class="l">4: </span>
+<span class="l">5: </span>
+</pre></td>
+<td class="snippet"><pre class="fssnip highlighted"><code lang="cs">[Property]
+<span class="k">public</span> <span class="k">bool</span> StringToLowerMakesEveryCharLower(<span class="k">string</span> input)
+{
+    <span class="k">return</span> input.ToLower().All(c <span class="o">=</span><span class="o">&gt;</span> Char.IsLower(c));
+}
+</code></pre></td></tr></table>
+<div class="fragment">
+<p><img src="./images/shrink.png" alt="Shrink" /></p>
+</div>
+<aside class="notes">
+hier ist ein beispiel das FsCheck nicht intuitive Fehler finden kann<br/>
+</aside>
+</section>
+<section >
+<h3>Links</h3>
 <ul>
-<li><p><a href="https://fscheck.github.io/FsCheck/">Dokumentation</a> - <a href="https://fscheck.github.io/FsCheck/">https://fscheck.github.io/FsCheck/</a></p></li>
-<li><p><a href="https://github.com/fscheck/FsCheck/tree/master/examples">Code Beispiele in C# und F#</a></p></li>
-<li><p><a href="vilinski.github.io/presentations/2019/FsCheck">Diese Folien</a>  - vilinski.github.io/presentations/2019/FsCheck</p></li>
-<li>
-<p><a href="http://fsprojects.github.io/FsReveal/">FsReveal</a></p>
-<ul>
-<li><p><a href="https://revealjs.com/#/">Reveal.js</a></p></li>
-<li><p><a href="https://de.wikipedia.org/wiki/Markdown">Markdown</a></p></li>
-<li><p><a href="https://fsharpforfunandprofit.com">F#</a></p></li>
-</ul>
-</li>
+<li><a href="https://fscheck.github.io/FsCheck/">FsCheck</a> - fscheck.github.io/FsCheck/</li>
+<li><a href="https://github.com/fscheck/FsCheck/tree/master/examples">Code Beispiele in C# und F#</a></li>
+<li><a href="https://fsharpforfunandprofit.com/posts/property-based-testing-2/">Choosing properties</a></li>
+<li><a href="vilinski.github.io/presentations/2019/FsCheck">Diese Folien</a>  - vilinski.github.io/presentations/2019/FsCheck</li>
 </ul>
 </section>
 </section>
