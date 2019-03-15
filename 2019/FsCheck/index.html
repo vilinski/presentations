@@ -106,7 +106,7 @@ TestCoverage testet nur die Fleiß der Tester, nicht die Korrektheit<br/>
 <span class="k">public</span> <span class="k">class</span> UselessTests {
     [Fact]
     <span class="k">public</span> <span class="k">void</span> Coverage<span class="n">0</span>() {
-        Assert.Empty(Useless.GetCharsFrequency(<span class="k">null</span>));
+        Assert.Empty(Useless.GetTop<span class="n">5</span>Word(<span class="k">null</span>));
     }
 }
 </code></pre></td></tr></table>
@@ -238,7 +238,7 @@ wird durch copy/paste gelöst, was die tests brüchig macht<br/>
 <p>Attribute <del>Fact</del> <code>Theory</code></p>
 </div>
 <aside class="notes">
-Testframeworks anbieten hier die Raw Test, DataSource, oder InlineData<br/>
+Testframeworks bieten hier die Raw Test an, DataSource, oder InlineData<br/>
 So können wir weiter treiben. Mühsam, kann immer noch nicht alles abgedeckt sein<br/>
 </aside>
 </section>
