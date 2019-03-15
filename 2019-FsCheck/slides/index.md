@@ -50,7 +50,7 @@
     public class UselessTests {
         [Fact]
         public void Coverage0() {
-            Assert.Empty(Useless.GetCharsFrequency(null));
+            Assert.Empty(Useless.GetTop5Word(null));
         }
     }
 
@@ -135,7 +135,7 @@ Attribute <del>Fact</del> `Theory`
 
 </div>
 
-' Testframeworks anbieten hier die Raw Test, DataSource, oder InlineData
+' Testframeworks bieten hier die Raw Test an, DataSource, oder InlineData
 ' So können wir weiter treiben. Mühsam, kann immer noch nicht alles abgedeckt sein
 
 ---
