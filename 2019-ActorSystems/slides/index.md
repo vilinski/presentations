@@ -1,5 +1,10 @@
+- title : Actor Systems
+- description : Introducion to Actor Systems
+- author : Andreas Vilinski
+- theme : league
+- transition : slide
+
 # Actor systems
-## Orleans
 
 ***
 
@@ -43,14 +48,56 @@
 
 --
 
-## Erlang 
+## Erlang
     - RabbitMQ
-        - Scala
-            - Akka
-        - .NET
-            - Akka.NET
-            - Orleans
-            - ProtoActor (.NET, Go)
+    - Akka
+      - JVM port (scala)
+      - .NET port(s)
+        - Akka.NET
+        - Orleans
+        - ProtoActor (.NET, Go)
+
+---
+
+# Actor
+
+' Welche Probleme löst actor system
+' Classik 3-tier - device-service-db
+' latency
+' CQRS
+' Actor
+
+---
+
+## Actor in Akka
+
+- Actor System
+- ActorRef
+- Message
+- Message box
+- Single threaded core
+- Resilient
+
+---
+
+## Actor in Orleans
+
+![Grain Lifecycle](images/grain-lifecycle.png)
+![Grains](images/grains.png)
+
+- Virtual actor
+- No explicit creation - always here
+- No supervision - can't fail
+- No ActorRef - simulates "normal" object reference
+- Location transparent - just actor interface and ID
+
+--
+
+## Orleans smart cache pattern
+
+![Middle tier](images/actor_middle_tier.png)
+
+Client -> Actor -> DB
 
 ---
 
