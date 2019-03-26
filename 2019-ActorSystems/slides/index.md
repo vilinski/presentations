@@ -1,7 +1,7 @@
 - title : Actor Systems
 - description : Introducion to Actor Systems
 - author : Andreas Vilinski
-- theme : league
+- theme : serif
 - transition : slide
 
 # Actor systems
@@ -25,7 +25,6 @@
 
 ```erlang
   %% A process whose only job is to keep a counter.
-  %% First version
   -module(counter).
   -export([start/0, codeswitch/1]).
 
@@ -46,16 +45,18 @@
   codeswitch(Sum) -> loop(Sum).
 ```
 
---
+---
 
 ## Erlang
-    - RabbitMQ
-    - Akka
-      - JVM port (scala)
-      - .NET port(s)
-        - Akka.NET
-        - Orleans
-        - ProtoActor (.NET, Go)
+
+- RabbitMQ
+- Actor System
+  - JVM
+    - <img src="./images/akka.png" height="40" width="40" style="vertical-align:middle" /> Akka
+  - .NET
+    - <img src="./images/akka.net.png" height="40" width="40" style="vertical-align:middle"> Akka.NET
+    - <img src="./images/orleans.png" height="40" width="40" style="vertical-align:middle" /> Orleans
+    - <img src="./images/proto.actor.png" height="40" width="40" style="vertical-align:middle" /> ProtoActor (.NET, Go)
 
 ---
 
@@ -104,6 +105,7 @@ Client -> Actor -> DB
 ### Akka.NET vs Orleans
 
 Similarities:
+
 - Separate Actors
 - no memory share
 
