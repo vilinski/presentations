@@ -50,10 +50,20 @@ let c = factorial a
 #### More F#
 
 *)
+[<Measure>] type m
+[<Measure>] type sec
+[<Measure>] type kg
+let distance = 2.0<m>
+let time = 1.0<sec>
+let speed = distance / time // 2.0<m/sec>
+let accelleration = speed / 1.0<sec> // 2.0<m/sec^2>
+let force = 5.0<kg> * acceleration // 5.0<kg m/sec^2>
+
 [<Measure>] type sqft
 [<Measure>] type dollar
 let sizes = [|1700<sqft>;2100<sqft>;1900<sqft>;1300<sqft>|]
 let prices = [|53000<dollar>;44000<dollar>;59000<dollar>;82000<dollar>|]
+
 (**
 
 #### `prices.[0]/sizes.[0]`

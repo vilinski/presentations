@@ -8,11 +8,28 @@
 
 ***
 
+## Agent-based Programming
+
+a.k.a. [The Actor model](https://en.wikipedia.org/?title=Actor_model)
+
+> ...is a mathematical model of concurrent computation that treats "actors" as the universal primitives of concurrent computation: in response to a message that it receives, an actor can make local decisions, create more actors, send more messages, and determine how to respond to the next message received.
+
+First proposed in 1973!
+
+---
+
+## Ericsson AXD 301
+
+![AXD301](Ericsson-AXD-301.jpg)
+
+- Erlang (1986) - 33 Years
+- 99.999999999% uptime - "9 nines"
+- over 20 years!
+- ~0.631 secs downtime per year
+
 ## Erlang
 
-- Erlang (1986) - 33 years
-- by Joe Armstrong
-- Ericsson
+- by Joe Armstrong at Ericsson
 - SW Requirements:
     - Distributed - micro processes
     - Fault toleran - autorecover
@@ -24,25 +41,22 @@
 ## Erlang beispielcode
 
 ```erlang
-  %% A process whose only job is to keep a counter.
-  -module(counter).
-  -export([start/0, codeswitch/1]).
+-module(ping_pong).
+-export([ping/0, pong/0]).
 
-  start() -> loop(0).
-
-  loop(Sum) ->
+ping() ->
+    Receiver = spawn(ping_pong, pong, []),
+    Receiver ! {self(), ping},
     receive
-       {increment, Count} ->
-          loop(Sum+Count);
-       {counter, Pid} ->
-          Pid ! {counter, Sum},
-          loop(Sum);
-       code_switch ->
-          ?MODULE:codeswitch(Sum)
-          % Force the use of 'codeswitch/1' from the latest MODULE version
+        pong ->
+            pong
     end.
 
-  codeswitch(Sum) -> loop(Sum).
+pong() ->
+    receive
+        {Sender, ping} ->
+            Sender ! pong
+    end.
 ```
 
 ---
@@ -50,6 +64,7 @@
 ## Erlang
 
 - RabbitMQ
+- DBs : Riak, SimpleDB (AWS), CouchDB
 - Actor System
   - JVM
     - <img src="./images/akka.png" height="40" width="40" style="vertical-align:middle" /> Akka
@@ -57,6 +72,17 @@
     - <img src="./images/akka.net.png" height="40" width="40" style="vertical-align:middle"> Akka.NET
     - <img src="./images/orleans.png" height="40" width="40" style="vertical-align:middle" /> Orleans
     - <img src="./images/proto.actor.png" height="40" width="40" style="vertical-align:middle" /> ProtoActor (.NET, Go)
+
+---
+
+# Message passing
+
+> In computer science, message passing sends a message to a process (which may be an actor or object) and relies on the process and the supporting infrastructure to select and invoke the actual code to run. Message passing differs from conventional programming where a process, subroutine, or function is directly invoked by name
+
+From Wikipedia
+
+The set of messages that a server (grain)
+can process defines its public interface
 
 ---
 
@@ -109,18 +135,18 @@ Similarities:
 - Separate Actors
 - no memory share
 
-|                | Akka.NET               | Orleans                                |
-| -------------- | ---------------------- | -------------------------------------- |
-| Primary focus  | use full power         | Simplicity for distributed computing   |
-|                | Minimal abstraction    | natural behavior for non-experts first |
-| Lifecycle      | explicit start and end | Actor is always available, can't fail and restart - activate, deactivate|
-| Autocreation   | No, explicitely with supervision | Yes, activated when needed |
+|                 | Akka.NET               | Orleans                                |
+| ----------------| ---------------------- | -------------------------------------- |
+| Primary focus   | use full power         | Simplicity for distributed computing   |
+|                 | Minimal abstraction    | natural behavior for non-experts first |
+| Lifecycle       | explicit start and end | Actor is always available, can't fail and restart - activate, deactivate|
+| Autocreation    | No, explicitely with supervision | Yes, activated when needed |
 | Virtual actor space | Created on a given node, sharding | Actor -> Silos -> Cluster|
 | Programming model | Actor | Virtual actor |
-| Identified by  | ActorRef : ActorPath + UID | Actor ID - Guid, string, long |
+| Identified by   | ActorRef : ActorPath + UID | Actor ID - Guid, string, long |
 | Location transparency | ActorRef - serializable representation of actor | No knowledge about location |
-|Autoscale out | Abstractions for explicit scaleout |StatelessWorker can have multiple activations, managed by runtime/workload |
-|Actor interface |||
+| Autoscale out   | Abstractions for explicit scaleout |StatelessWorker can have multiple activations, managed by runtime/workload |
+| Actor interface |||
 
 
 # Links
