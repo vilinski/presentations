@@ -64,3 +64,29 @@
 | ```xs.Union(ys)``` | ```xs.union(ys)``` | ```;``` | ```;``` |
 | ```xs.Where(pred)``` | ```xs.filter(pred)``` | ```Seq.filter pred xs``` | ```;``` |
 | ```xs.Zip(ys, f)``` | ```(xs, ys).zipped.map(f) // When f = identity, use `xs.zip(ys)`.``` | ```Seq.zip f ys xs``` | ```;``` |
+
+| Concern        | React+Redux+TypeScript     | Elm             |
+| -------------- | -------------------------- | --------------- |
+| views          | stateless React components | `view`          |
+| data modeling	 | TypeScript types           | types           |
+| app state	     | Redux store                | `model`         |
+| input/events   | Redux actions              | `Msg` (message) |
+| updating state | Redux reducer              | `update`        |
+| effects (e.g. HTTP request) | redux-loop, redux-saga, … | `Cmd` (command) |
+
+Task.Factory.StartNew(
+    async () =>
+    {
+        // while no cancellation has been requested AND the strategy
+        // has not completed, periodically save the state.
+        // IsCompleted here does not mean success, but may mean cancelled as well
+        while (!_cancellationTokenSource.IsCancellationRequested &&
+                !strategy.Completion.IsCompleted)
+        {
+            await PersistState(strategy.GetSnapshot());
+            await Task.Delay(strategy.PersistStateInterval);
+        }
+    },
+    CancellationToken.None,
+    TaskCreationOptions.None,
+    TaskScheduler.Current);

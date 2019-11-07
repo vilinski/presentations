@@ -1,3 +1,10 @@
+# F#
+
+> A language that doesn't affect the way you think about programming is not worth knowing.
+Alan J. Perlis
+
+---
+
 # Träume über C# Zukunft
 
 Imaginäre PL, Zukunft der C#
@@ -7,30 +14,126 @@ Mehrere Schritte wo man was abkürzen kann
 
 # Warum warten?
 
-__DU__ hast es jetzt in deimen Visula studio!
+__DU__ hast es jetzt in deinen VS!
 
 Einfach umbenennen:
 - `*.cs` -> `*.fs`
 - `*.csproj` -> `*.fsproj`
 - `*.csx` -> `*.fsx`
 
-Noch nichts von `*.csx` gehört? Kein Wunder, nicht sehr nützlich
+Noch nichts von `*.csx` gehört? Kein Wunder
+
+---
+
+# Unterschiede C# -> F#
+
+```sql
+select differences from cs_to_fs
+order by Importance
+```
+
+1. Kurze Syntax
+2. Type Inference
+3. Starke Typsystem
+4. Andere Defaults
+5. Andere Filosofie
+
+---
+
+# Kurze Syntax
+
+| Implementation | C#     | F#    |
+| -------------- | -------|-------|
+| Braces         |  56929 |   643 |
+| Blanks         |  29080 |  3630 |
+| Null Checks    |   3011 |    15 |
+| Comments       |  53270 |   487 |
+| Useful Code    | 163276 | 16667 |
+| App Code       | 305566 | 21442 |
+| Test Code      |  42486 |  9359 |
+| Total Code     | 348430 | 30801 |
 
 ---
 
 # Kurze Syntax ist nicht Grund genug
 
+Technology confidence Chart
+
+Start right now with FP by zero.
+
+---
+
+# Wrong defaults - nullable, mutable,
+
+OOP | FP  |
+--- | --- |
+- encapsulation
+- polimorphysm
+- inheritance |
+- isolation
+- composition
+- purity |
+
+---
+
+# OOP world
+- abstraction (logger, orm)
+    - orm - good luck to implement both mongodb, postgres
+    - pub/sub - rabbit vs kafka - throw away your subscription methods
+    - logger - change from serilog to others - throw away every logging line
+- extensibility
+    - where's my implementation? look in base or derived clases
+    - where's my state? same
+    - can you keep it in your head? depend on "go to usage"
+    - interface just for mocks
+    - how many interfaces having exacly one impl?
+- encapsulation
+    - how many methods/responsibilites per class?
+    - ideally just one, but then why we have the class at all again?
+
 Was hat C# und F# gleich
 
 ---
 
+# FP world
+
+- abstractions ???
+    - functions!
+- extensibility?
+    - composition of functions!
+- isolation
+    - input -> output
+    - you always know all about your function
+    - pure function is already isolated
+    - `serialze: Person -> BsonDocument`
+    - `deserial: BsonObject -> Person`
+
+---
+
 # Was hat C# und F# gleich
+
+---
+
+### F#-only features
+
+- Computation expressions:
+  * ***async***, query, seq, cloud, log, mongo, ...
+- Type providers - for any structured data
+  * sql, csv, xml, json, wmi, odata, wsdl, hadoop/hive, typescript, excel, swagger, registry, chess...
+- Measure-types - currency, physical units
+- Discriminated unions - compare to inheritance hell
+- Active patterns - compare to scala unapply
+
+---
 
 ## Lambda
 
 ```csharp
     // vorher
     var byAge = personen.Sort(new ComparerPersonByAge());
+    public class ComparerPersonByAge : IComparer<Person> {
+        ...
+    }
     // nachher
     var byLastName = personen.OrderBy(x => x.LastName);
 ```
@@ -42,7 +145,7 @@ Was hat C# und F# gleich
 
 ---
 
-# Was hat C# und F# hat es besser
+# Was C# zwar hat, aber in F# ist es besser
 
 ## Type Inference
 
@@ -65,11 +168,33 @@ Was hat C# und F# gleich
 
 ---
 
-# Was hat C# und F# hat es besser
+# Was C# zwar hat, aber in F# ist es besser
+
+---
 
 ## REPL
-- C# Interactive
+
+- CSI - C# Interactive
 - FSI - F# Interactive
+
+```
+$ fsharpi
+
+Microsoft (R) F# Interactive version 4.1
+Copyright (c) Microsoft Corporation. All Rights Reserved.
+
+For help type #help;;
+
+> let speed = 30
+- let distance = 60
+- let time = distance / speed;;
+val speed : int = 30
+val distance : int = 60
+val time : int = 2
+>
+```
+
+---
 
 ## Scripting
 
@@ -81,7 +206,38 @@ Was hat C# und F# gleich
 
 ---
 
-# Was hat C# und F# hat es besser
+# C# Scripting
+
+Aber möglich mit `dotnet-script`:
+
+```
+    dotnet tool install -g dotnet-script
+```
+
+    #!/usr/bin/env dotnet-script
+    #r "nuget: AutoMapper, 6.1.0"
+    Console.WriteLine("whatever);
+
+---
+
+Noch nichts von `*.csx` gehört? Kein Wunder, ohne IDE nicht sehr nützlich
+
+    C:\Users\scott\Desktop\scriptie>dotnet script
+    > 2+2
+    4
+    > var x = "scott hanselman";
+    > x.ToUpper()
+    "SCOTT HANSELMAN"
+
+---
+
+# F# Scripting
+
+- F# is scripting ready
+- IDE-Unterstützung bei `*.fsx` wie bei `*.fs`
+
+
+# Was C# zwar hat, aber in F# ist es besser
 
 ## Async programming
 
@@ -100,9 +256,9 @@ Was hat C# und F# gleich
 # Was hat C# (von F#)
 
  Feature                | F#   | C#
-------------------------|------|---------
+------------------------|------|-----------
 Lambda                  | ✓    | 3.0 (2007)
-Type inference          | +-   | 3.0 (2007) - var, LINQ only
+Type inference          | +-   | 3.0 (2007) - var, LINQ only records
 REPL                    | +-   | 6.0 (2007)
 Scripting               | +-   | 2017 `csharp-scripting` - cake, etc.
 Async programming       | 2007 | 6.0 (2012)
@@ -110,22 +266,77 @@ Local functions         | +-   | 7.0 (2017)
 Tuples                  | +-   | 7.0 (2017)
 Pattern matching        | +-   | 7.0 (2017)
 
-
 ---
 
 # Was hat F# mehr als C#
 
  Feature                | F# | C#
 ------------------------|----|---------
-Records                 | ✓  | LINQ, 8.0?
-`using` expression      | ✓  | 8.0
-Not nullable by default | ✓  | 8.0
+Records                 | ✓  | 9.0?
+`using` expression      | ✓  | 8.0 (2019)
+Not nullable by default | ✓  | 8.0 (2019)
 Markdown in code docu   | ✓  | nicht geplant
 Immutability by default | ✓  | nicht geplant
 Typesafe printf         | ✓  | nicht geplant
 Algebraic types         | ✓  | nicht geplant
 Type providers          | ✓  | nicht geplant
 Computation expression  | ✓  | nicht geplant
+
+---
+
+# Async/Await
+
+Glorreiche Erfindung von C# ?
+
+ Year| Language   |
+2007 | F#         | async workflows
+2009 | Axum       | Imperative async/await syntax
+2010 | M#         | Imperative "C#-like" syntax, applied to 10MLOC codebase, perf optimizations
+2012 | C#         | `async/await` as you know it in all the languages.
+2014 | Dart       |
+2015 | Python     |
+2015 | TypeScript |
+2017 | JavaScript |
+2019 | rust       |
+2019 | C++        | co_await/co_yield/co_return
+
+---
+
+# Easy custom operator definition
+
+    let (=>) a b = a,b
+
+    let myDict = [
+        "Hi" => 1,
+        "Hello" => 2,
+        "Привет" => 1000
+    ]
+
+---
+
+# Pipe operator
+
+    let (|>) x f = f x
+
+    bus
+    |> detectDevice
+    |> paintBody Color.Red
+    |> removeAll (fun device -> not device.IsActive)
+    |> publishData
+
+    publishData(removeAll (fun device -> not device.IsActive, paintBody(Color.Red, detectDevice(bus))))
+
+---
+
+# Package manager
+
+| NuGet              | Paket |
+| Build-In           | Native NuGet Support |
+| No Transitive Deps |  Handles Transitive deps |
+| No package conflict resolution  | Full control over conflicts |
+| no reproducible builds due no lock file (planned for per-project) | paket.lock for maintainability |
+| Limited command line commands | Rich command line commands |
+| No other sources to restore than NuGet | also Git, GitHub, HTTP |
 
 ---
 
@@ -296,11 +507,11 @@ Was bringt mir das Lernaufwand
 
 |  OOP                        | FP
 |-----------------------------|---
-| Single Responsibility (SRP) | Function
-| Open/Closed principle (OCP) | Function
-| Liskoff Substitution (LSP)  | Ebenso
-| Interface Segregation (ISP) | Ja, functions
-| Dependency Inversion (DIP)  | Oh my, again!
+| _S_ingle Responsibility (SRP) | Function
+| _O_pen/Closed principle (OCP) | Function
+| _L_iskoff Substitution (LSP)  | Ebenso
+| _I_nterface Segregation (ISP) | Ja, functions
+| _D_ependency Inversion (DIP)  | Oh my, again!
 
 ---
 
@@ -338,23 +549,67 @@ Banana-Monkey-Jungle problem
 - Pattern matching
 - Better defaults
 
-# SRTP aka Statically resolved Type Parameters
+# SRTP - Statically Resolved Type Parameters
 
-    open System
+```fs
+open System
 
-    type Circle = Circle of radius:double
-    type Rectangle = Rectangle of width:double * length:double
+type Circle = Circle of radius:double
+type Rectangle = Rectangle of width:double * length:double
 
-    type CircleShape() =
-        member this.Area(Circle(radius)) = Math.PI * Math.Pow(radius, 2.)
-    let circleShape = CircleShape()
+type CircleShape() =
+    member this.Area(Circle(radius)) = Math.PI * Math.Pow(radius, 2.)
+let circleShape = CircleShape()
 
-    type RectangleShape() =
-        member this.Area(Rectangle(width, length)) = width * length
-    let rectangleShape = RectangleShape()
+type RectangleShape() =
+    member this.Area(Rectangle(width, length)) = width * length
+let rectangleShape = RectangleShape()
 
-    let inline areaOf shapeImpl shape =
-        ( ^T : (member Area : 'A -> double) (shapeImpl, shape))
+let inline areaOf shapeImpl shape =
+    ( ^T : (member Area : 'A -> double) (shapeImpl, shape))
+```
+
+---
+
+# SRTP
+
+```fs
+let inline tryParse< ^a when ^a : (static member TryParse : string * ^a byref -> bool) > s =
+    let r = ref Unchecked.defaultof< ^a >
+
+type MultipleTypes=
+    { MyInt : int
+      MyDateTime : DateTime
+      MyDouble : double
+    }
+let results =
+    { MyInt = tryParse "152"
+      MyDateTime = tryParse "01.04.2019"
+      MyDouble = tryParse "42.42"
+    }
+```
+
+---
+
+# Tuples
+
+```csharp
+var tuple = Tuple.Create(42, "The answer");
+var number = tuple.Item1;
+var answer = tuple.Item2;
+```
+
+```fsharp
+let tuple = 42, "I swear"
+let number, answer = tuple
+```
+
+C# 8.0
+
+```csharp
+var tuple = (42, "The answer");
+var (number, answer) = tuple;
+```
 
 ---
 
@@ -378,18 +633,147 @@ let Bonjovi =
 # Records (anonym)
 
 ```fsharp
-    let xa   = {| A = 1 |}
-    let xafu = {| xa with F = 1; U = "wow" |}
-    let xaf  = {| x without U |}
+    let a   = {| A = 42 |}
+    let afu = {| a with F = 'f'; U = "wow" |}
+    // afu =  {| A = 42; F = 'f'; U = "wow"|}
+    let af  = {| afu without U |}
+    // af =   {| A = 42; F = 'f'|}
     let sänger = {| BonJovi with OnTour = false|}
-    let x = {| F = 1 |}
-    let y = {| U = 1 |}
+    let x =  {| F = 1 |}
+    let y =  {| U = 2 |}
     let xy = {| include x; include y |}
+    // xy =  {| F = 1; U = 2|}
 ```
+
+---
+
+# Object expressions
+
+## Look mum - no Mock frameworks!
+
+One of few things where even Java is ahead.
+
+```fsharp
+let time = { new ITime with
+    member mock.GetHour() = 15
+}
+```
+
+```csharp
+public class FakeTime : ITime {
+    ...
+}
+var time1 = new FakeTime();
+
+var time2 = new Mock<ITime>().Setup(x => x.GetHour()).Returns(15);
+```
+
+---
+
+# ADT - Algebraische Datentypen
+
+## Product
+
+ID x UserName x FirstName x LastName x EMail
+
+## Sum Type
+
+Cache + Check + CreditCard + PayPal
+
+---
+
+# ADT - Algebraische Datentypen
+
+| Language  | Feature              |
+| F#        | Discriminated Unions |
+| Elm       | Variants             |
+| Rust      | Enumerations         |
+| Swift     | Enumerations         |
+| Kotlin    | Sealed Classes       |
+| Haskell   | Algebraic Data Types |
+| C/C#/Java | Nope ¯\_(ツ)_/¯       |
+
+---
+
+# ADT - Algebraische Datentypen
+
+- Option
+- Either
+- Result
+- Smart enums
+- ...
+
+---
+
+# C#-Way
+
+- Find a User by ID in BD
+- Exception vs null? :thinking:
+- Namenskonvention
+    - `public User GetUser(id)` - throws if not found. Needs try-catch!
+    - `public User FindUser(id)` - return `null` if not found. Handle it youself later!
+
+---
+
+# F#-Way
+
+```fsharp
+/// returns User, no nulls, no errors. Exceptions are generally possible though
+let getUser(id : UserId) : User = ...
+
+/// returns None if not found, Some user if found
+let findUser(id: UserId) : User option = ...
+
+/// returns Ok user if found, Failure domainError if not
+let tryGetUser(id : UserId) : Result<User,DomainError> = ...
+```
+
+---
+
+# F#-Way
+
+What matters is a type signature, no silly naming conventions
+
+```fsharp
+let findUser(userId) : Async<Result<Option<User>,DomainError>>
+
+let parse(json): Result<Config,ParseError>
+```
+
+---
+
+# Event Sourcing
+
+- No DB Scheme / No Migration / No ORM
+- No destructive actions - no information loss
+- Different interpretation of the past possible
+
+---
 
 # Quotes
 
 >"Complexity is anything that makes software hard to understand or to modify." — John Outerhout
+
+---
+
+# Nachteile
+
+- keine `NullReferenceException`, weil keine `null`
+- kein `return` - was ist die Rückgabe
+- keine geschweifte Klammern - ich sehe die Grenzen nicht mehr
+- keine Unit-Tests möglich, weil `kompiliert` == `funktioniert`
+- designed für Mathe und AI, daher zu akademisch
+
+---
+
+# Nachteile
+
+- Kein F# und C# in einem Project
+- Wenig Refactoring-Support (eigentlich nicht so wichtig)
+- Wenig Debugger-Support (auch nicht so nützlich)
+- C# (bzw. ganz OOP) fängt an zu stinken: "in F# könnte ich einfach..."
+
+---
 
 # Links
 - [10 reasons not to use FPL][10-reasons]
@@ -406,6 +790,7 @@ https://twitter.com/gsomix/status/940159910070947841
   - https://twitter.com/mikebild/status/888042176738971649/photo/1
   - https://raw.githubusercontent.com/uanders/react-redux-cheatsheet/master/1440/react-redux-workflow-graphical-cheat-sheet_v110.png
 
+- [Snowflake](https://www.urbandictionary.com/define.php?term=Snowflake)
 
 
 [10-reasons]: https://fsharpforfunandprofit.com/posts/ten-reasons-not-to-use-a-functional-programming-language/
@@ -415,3 +800,4 @@ https://twitter.com/gsomix/status/940159910070947841
 [top-payed]: https://insights.stackoverflow.com/survey/2018#top-paying-technologies
 [top-payed2]: https://insights.stackoverflow.com/survey/2018/#technology-what-languages-are-associated-with-the-highest-salaries-worldwide
 [cheat-sheet]: (http://dungpa.github.io/fsharp-cheatsheet/)
+[workshop]: (http://www.fsharpworkshop.com)
