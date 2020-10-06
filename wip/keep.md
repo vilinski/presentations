@@ -17,26 +17,35 @@ Mehrere Schritte wo man was abkürzen kann
 __DU__ hast es jetzt in deinen VS!
 
 Einfach umbenennen:
-- `*.cs` -> `*.fs`
+- `*.cs`     -> `*.fs`
 - `*.csproj` -> `*.fsproj`
-- `*.csx` -> `*.fsx`
+- `*.csx`    -> `*.fsx`
 
 Noch nichts von `*.csx` gehört? Kein Wunder
 
 ---
 
-# Unterschiede C# -> F#
+- ~Bleeding Edge~ been around for 18 Yeears already
+- ~Completely Foreign~ Same as C#
+  -  Same SDK
+  -  Same Frameworks
+  -  Same IDE (VS, VSCode, Rider)
+  -  Same Tools (NuGet, dotnet build, test, etc) and more
+  -  Same libraries
+  -  Same Docker image
+
+# What's not same C# != F#
 
 ```sql
 select differences from cs_to_fs
 order by Importance
 ```
 
-1. Kurze Syntax
+1. Short Syntax
 2. Type Inference
-3. Starke Typsystem
-4. Andere Defaults
-5. Andere Filosofie
+3. Strong Type system
+4. Other Defaults
+5. Other Philosophy https://docs.google.com/presentation/d/1REaSgy_JdytKg1xX-nzHqGys-_9KnpBvEagFNHL87Vc/edit#slide=id.g6ef9ada57b_6_279
 
 ---
 
@@ -55,7 +64,7 @@ order by Importance
 
 ---
 
-# Kurze Syntax ist nicht Grund genug
+# Kurze Syntax ist nicht Grund genug?
 
 Technology confidence Chart
 
@@ -64,6 +73,46 @@ Start right now with FP by zero.
 ---
 
 # Wrong defaults - nullable, mutable,
+
+---
+
+# Nullable
+
+- Do you need any arguments against NullPointerExceptions?
+- You can not really defend your code
+- Next C# tries to fix this
+  - in one of many ugly ways (backwards compatibility)
+  - Guess what? Not nullable reference types!
+
+---
+
+# Mutability is the root of all evil generation 0 GCs
+
+- GC - generations
+  - Generation 0
+    - mostly new, intermediate objects
+    - GC is optimized to dispose them first
+  - Generation 1
+    - longer alive
+    - much more complex to free the memory
+
+- Immutable
+  - many short lived new objects
+  - (Generation 0) only can point to older objects
+- Mutable
+  - other way around: older -> newer, e.g. mutable collection
+  - fewer, longer lived objects - not a Generation 0
+
+---
+
+# Mutable
+
+- good luck to find who changes your object
+- even worse in multi-threaded environment
+- YES - it is because of performance
+- But NO - immutable doesn't mean slow, because...
+
+---
 
 OOP | FP  |
 --- | --- |
@@ -117,7 +166,7 @@ Was hat C# und F# gleich
 ### F#-only features
 
 - Computation expressions:
-  * ***async***, query, seq, cloud, log, mongo, ...
+  * ***async***, query, mongo, seq, cloud, arm, log, ...
 - Type providers - for any structured data
   * sql, csv, xml, json, wmi, odata, wsdl, hadoop/hive, typescript, excel, swagger, registry, chess...
 - Measure-types - currency, physical units
@@ -135,12 +184,13 @@ Was hat C# und F# gleich
         ...
     }
     // nachher
-    var byLastName = personen.OrderBy(x => x.LastName);
+    var byName = personen.OrderBy(x => x.LastName);
+    var byAge  = personen.OrderBy(x => x.Age);
 ```
 
 ```fsharp
-    let byAge  = personen |> Seq.sortBy(fun p -> p.Age)
     let byName = personen |> Seq.sortBy(fun p -> p.LastName)
+    let byAge  = personen |> Seq.sortBy(fun p -> p.Age)
 ```
 
 ---
@@ -148,6 +198,11 @@ Was hat C# und F# gleich
 # Was C# zwar hat, aber in F# ist es besser
 
 ## Type Inference
+
+There seems to be a popular misperception that type annotation are always mandatory
+in all typed languages. So the idea here is to show tha tyou can write entire
+programs without them, and then when we do insert some type annotation
+we explain why we chose to
 
 ```csharp
     Dictionary<string,int> dict1 = new Dictionary<string,int>();
@@ -199,9 +254,9 @@ val time : int = 2
 ## Scripting
 
 - C# - `*.csx`
-  - kein IDE
+  - Visual Studio Code
 - F# - `*.fsx`
-  - von anfang für Scripts vorbereitet
+  - von Anfang an für Scripts vorbereitet
   - Visual Studio, Visual Studio Code, JetBrains Rider, vim
 
 ---
@@ -210,13 +265,18 @@ val time : int = 2
 
 Aber möglich mit `dotnet-script`:
 
-```
-    dotnet tool install -g dotnet-script
+```sh
+dotnet tool install -g dotnet-script
 ```
 
-    #!/usr/bin/env dotnet-script
-    #r "nuget: AutoMapper, 6.1.0"
-    Console.WriteLine("whatever);
+```csharp
+#!/usr/bin/env dotnet-script
+#r "nuget: System.Text.Json, 4.7.1"
+
+using System.Text.Json;
+
+var numbers = JsonSerializer.Deserialize<int[]>("[1,2,3]");
+```
 
 ---
 
@@ -253,7 +313,7 @@ Noch nichts von `*.csx` gehört? Kein Wunder, ohne IDE nicht sehr nützlich
 
 ---
 
-# Was hat C# (von F#)
+# Was klaut C# (von F#)
 
  Feature                | F#   | C#
 ------------------------|------|-----------
@@ -289,9 +349,9 @@ Computation expression  | ✓  | nicht geplant
 Glorreiche Erfindung von C# ?
 
  Year| Language   |
-2007 | F#         | async workflows
+2007 | F#         | workflows builders, async
 2009 | Axum       | Imperative async/await syntax
-2010 | M#         | Imperative "C#-like" syntax, applied to 10MLOC codebase, perf optimizations
+2010 | M#         | Imperative "C#-like" syntax, applied to 10M LOC codebase, perf optimizations
 2012 | C#         | `async/await` as you know it in all the languages.
 2014 | Dart       |
 2015 | Python     |
@@ -309,6 +369,7 @@ Glorreiche Erfindung von C# ?
     let myDict = [
         "Hi" => 1,
         "Hello" => 2,
+        "Hola" => 3,
         "Привет" => 1000
     ]
 
@@ -452,7 +513,8 @@ let movie (id : int) : HttpHandler =
     json movie
 ````
 
-</td></tr><tr><td>
+</td></tr>
+<tr><td>
 
 ## BROWSER
 
@@ -462,7 +524,16 @@ let getMovie (id : int) : Promise<ClientMovie> =
     return movie
 ```
 
-</td></tr><tr>
+```fsharp
+let viewMovie movie =
+    Html.section [
+        Html.h1 movie.Name
+        Html.txt movie
+    ]
+```
+
+</td></tr>
+<tr><td>
 
 ## SHARED TYPE
 
@@ -475,7 +546,7 @@ type ClientMovie = {
 }
 ```
 
-</tr></table>
+</td></tr></table>
 
 ---
 
@@ -494,19 +565,31 @@ Was bringt mir das Lernaufwand
 
 # Vorteile
 
-- Stärkere Typsystem
+- Ein mal schreiben und vergessen
+- Stärkeres Typsystem
 - Bessere tools
 - Testbarkeit
 - Leichtere Refactoring
-- Andere Bibliotheken
+- Andere, oft bessere Bibliotheken
 - Community
 
 ---
 
+# Praktische Vorteile
+
+- Weniger Code zu lesen,
+    - Zwingend formatiert
+    - Zwingend strukturiert
+    - Zwingend typisiert
+- Geschrieben -> vergessen
+- Zero NullReferenceExceptions
+- Zero Mocks
+
 # SOLID Principles
 
-|  OOP                        | FP
-|-----------------------------|---
+
+|  OOP                          | FP
+|-------------------------------|---
 | _S_ingle Responsibility (SRP) | Function
 | _O_pen/Closed principle (OCP) | Function
 | _L_iskoff Substitution (LSP)  | Ebenso
@@ -514,6 +597,14 @@ Was bringt mir das Lernaufwand
 | _D_ependency Inversion (DIP)  | Oh my, again!
 
 ---
+
+# SOLId Principles functional way
+
+- Stateless - no mutable state
+- Objectless - no communicating object, just pure data structures
+- Loosely coupled - no inheritance, just function signatures
+- Idempotent - multiple calls with same parameters yield same result
+- Deterministic - easier to achive with pure functions
 
 # OOP Design Patterns
 
@@ -756,6 +847,23 @@ let parse(json): Result<Config,ParseError>
 
 ---
 
+# Vorteile
+
+- Bringt Sicherheit über das was der Code eigentlich macht. Weniger Sorgen, dass:
+    - jemand ändert liste der Devices, wärend die bearbeitet wird
+    - ticketSend ist von anderen Objekten abhängig ist
+    - dass die Reihenfolge der Aufrufe falsch sein kann
+    - dass Projektstruktur verschwimmt - compiler sorgt für Ornung
+    - keiner übergibt `mm` statt `MB`
+    - dass der neue alles kaputt refactoren kann
+- Leichter zu testen
+    - Ausgabe oder Effekte hängen nur von der Eingabe ab - keine Mocks
+- Leichter aufzuteilen und zusammenführen
+    - Funktionen sind leichter aufzuteilen oder zusammenführen
+- Leichter komlexe Businessdaten Domain klarer zu definieren
+
+---
+
 # Nachteile
 
 - keine `NullReferenceException`, weil keine `null`
@@ -766,11 +874,16 @@ let parse(json): Result<Config,ParseError>
 
 ---
 
-# Nachteile
+# Wirkliche Nachteile
 
-- Kein F# und C# in einem Project
-- Wenig Refactoring-Support (eigentlich nicht so wichtig)
-- Wenig Debugger-Support (auch nicht so nützlich)
+- C# hat excellentes Tooling, F# weniger
+    - Weniger Refactoring-Support (eigentlich weniger wichtig)
+    - Wenig Debugger-Support (auch nicht so gebräuchlich)
+    - Weniger statische Analysers, Linters
+- C# hat riesiges Community, F# kleineres
+    - somit weniger F# Jobs ( dafür teurere )
+- Kein F# und C# in einem Project möglich (aber durchaus in einem Solution)
+- Unerwartete NullReferenceExceptions von C# bibliotheken möglich
 - C# (bzw. ganz OOP) fängt an zu stinken: "in F# könnte ich einfach..."
 
 ---
@@ -801,3 +914,4 @@ https://twitter.com/gsomix/status/940159910070947841
 [top-payed2]: https://insights.stackoverflow.com/survey/2018/#technology-what-languages-are-associated-with-the-highest-salaries-worldwide
 [cheat-sheet]: (http://dungpa.github.io/fsharp-cheatsheet/)
 [workshop]: (http://www.fsharpworkshop.com)
+[goodbye-oop]: (https://medium.com/@cscalfani/goodbye-object-oriented-programming-a59cda4c0e53)
