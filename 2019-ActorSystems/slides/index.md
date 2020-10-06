@@ -72,6 +72,7 @@ pong() ->
     - <img src="./images/akka.net.png" height="40" width="40" style="vertical-align:middle"> Akka.NET
     - <img src="./images/orleans.png" height="40" width="40" style="vertical-align:middle" /> Orleans
     - <img src="./images/proto.actor.png" height="40" width="40" style="vertical-align:middle" /> ProtoActor (.NET, Go)
+    - ...
 
 ---
 
@@ -85,6 +86,22 @@ The set of messages that a server (grain)
 can process defines its public interface
 
 ---
+
+# Actor fundamentals
+
+- Actor
+- ActorRef
+- Message
+- Mailbox
+- Supervice-Strategies: one-for-one, one-for-all
+
+### Allowed operations
+
+- create another actor
+- send a message
+- designate how to handle the message
+
+  private state
 
 # Actor
 
@@ -148,6 +165,38 @@ Similarities:
 | Autoscale out   | Abstractions for explicit scaleout |StatelessWorker can have multiple activations, managed by runtime/workload |
 | Actor interface |||
 
+### Advangages Orleans vs Rabbit
+
+-  Persistent Stream - TODO
+-  Temp State or smart cache - when otherwise it should always be persisted, roundtrip to DB. Examples:
+    - user session with short live info like what sites are already visited, which modules are allowed, etc
+    - 2FA
+        - generate random code on one endpoint (SMS, E-Mail, etc.),
+        - expect input on other (e.g. click a link in E-Mail or SMS)
+        - let expire after defined time - if short then just in unpersisted actor state, if longer - actor reminder
+    - ticket state - accepting, closing, escalation
+    - device state - onboarding, activation, etc.
+- access from multiple instances to a shared state
+    - runtime within each actor is single threaded. Other calls are waiting for the first
+    - reentrant actor is not single threaded
+- scheduler - already built into actor:
+    - timer - transitive, cancelled if actor is disposed
+    - reminder - persistent, survives between activation
+    - own actors are possible
+- interservice communication
+    - Rabbit
+        - send each message to queue
+        - receive each message from queue in other (or same) service
+    - Orleans
+        - first time if other actor location (actor ref) not yet known - ask cluster
+        - send message from actor to actor direct
+    - in case of single process - just compile a single silo - add all relevant parts
+- also useful within single service
+    - no IHostedService needed
+    - instantiation and disposing by need, not for each message
+    - simple async communication for complicated scenarios:
+        - ticket escalation
+    - Orleans.Http - controller is an actor TODO
 
 # Links
 
