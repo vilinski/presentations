@@ -5,7 +5,7 @@ Alan J. Perlis
 
 ---
 
-# Träume über C# Zukunft
+## Träume über C# Zukunft
 
 Imaginäre PL, Zukunft der C#
 Mehrere Schritte wo man was abkürzen kann
@@ -162,6 +162,18 @@ Was hat C# und F# gleich
 # Was hat C# und F# gleich
 
 ---
+
+# What C# doesn'T have
+
+https://tooslowexception.com/the-8-most-missing-features-in-c/
+
+- discriminated unions
+- first class void/unit
+- pipe operator
+- type inference on methods
+- anonymous interface implementation
+- shapes / type classes
+- primary constructor
 
 ### F#-only features
 

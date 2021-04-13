@@ -1,14 +1,19 @@
-- title : Async
-- description : Introduction to async programming
-- author : Andreas Vilinski
-- theme : night
-- transition : default
+---
+title : Async
+description : Introduction to async programming
+author : Andreas Vilinski
+theme : night
+transition : default
+verticalSeparator: ^***$
+---
 
-***
+## Asynchronous Programming
+#### Tips and Tricks
+
+---
+
 
 ### Async programming
-
-First about different approaches
 
 - WWW - world wide waiting
 - APM - IAsyncResult
@@ -16,51 +21,51 @@ First about different approaches
 - async/await
 - Rx
 - Message queues
-- Actor - Erlang/Akka/Akka.NET
+- Actor - Erlang/Akka/Akka.NET/...
 
-' First about different approaches, mostly in C# just becauses
+<aside class="notes">
+First short about different approaches, mostly in C# just because
+</aside>
 
 ---
 
 ### Traditional synchronous approach
 
-    [lang=csharp]
+```csharp
     public class MyReader
     {
         var fs = File.OpenRead(@"c:\somefile.txt");
         byte[] buffer = new byte[fs.Length];
         public int Read(byte [] buffer, int offset, int count);
     }
+```
 
-' wasting user time
+wasting user time {.fragment .fade-in}
 
-***
+--
 
 ### APM
 
-    [lang=csharp]
-    static void Main(string[] args)
-    {
-        byte[] readBuffer;
-        var fs = File.OpenRead(@"c:\somefile.txt");
-        readBuffer = new byte[fs.Length];
-        var result = fs.BeginRead(readBuffer, 0, (int)fs.Length,
-          OnReadComplete, fs);
+```csharp
+static void Main(string[] args) {
+    byte[] readBuffer;
+    var fs = File.OpenRead(@"c:\somefile.txt");
+    readBuffer = new byte[fs.Length];
+    var result = fs.BeginRead(readBuffer, 0, (int)fs.Length,
+      OnReadComplete, fs);
+    //do other work here while file is read...
+    Console.ReadLine();
+}
+private static void OnReadComplete(IAsyncResult result) {
+    var stream = (FileStream)result.AsyncState;
+    var bytesRead = stream.EndRead(result);
+    Console.WriteLine("Read {0} bytes successfully.", bytesRead);
+    stream.Dispose();
+}
+```
 
-        //do other work here while file is read...
-
-        Console.ReadLine();
-    }
-    private static void OnReadComplete(IAsyncResult result)
-    {
-        var stream = (FileStream)result.AsyncState;
-        var bytesRead = stream.EndRead(result);
-        Console.WriteLine("Read {0} bytes successfully.", bytesRead);
-        stream.Dispose();
-    }
-
-' callback hell
-' two methods Begin and End
+- callback hell{.fragment .fade-in}
+- two methods: `BeginRead`, `EndRead`
 
 ---
 
@@ -145,7 +150,7 @@ APM with lambda indstead of separate method
         var read1 = ReadFileAsync(@"c:\somefile.txt");
         var read2 = ReadFileAsync(@"c:\someotherfile.txt");
         Task.WhenAll(read1, read2)
-            .ContinueWith(task => Console.WriteLine("All done."));   
+            .ContinueWith(task => Console.WriteLine("All done."));
         //do other work here while files are read...
     }
 
@@ -203,7 +208,7 @@ APM with lambda indstead of separate method
             using (var fs = File.OpenRead(filePath))
             {
                 var readBuffer = new Byte[fs.Length];
-                bytesRead = await fileStream.ReadAsync(readBuffer, 0, (int)fs.Length);             
+                bytesRead = await fileStream.ReadAsync(readBuffer, 0, (int)fs.Length);
                 Console.WriteLine("{0} bytes from file {1}", bytesRead, filePath);
                 return bytesRead;
             }

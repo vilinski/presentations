@@ -1,12 +1,11 @@
-- title : Async
-- description : Introduction to async programming
-- author : Andreas Vilinski
-- theme : night
-- transition : default
+% title : Async
+% description : Introduction to async programming
+% author : Andreas Vilinski
+% theme : night
+% transition : default
 
-***
 
-### Async programming
+# Async programming
 
 First about different approaches
 
@@ -18,9 +17,8 @@ First about different approaches
 - Message queues
 - Actor - Erlang/Akka/Akka.NET
 
-' First about different approaches, mostly in C# just becauses
+' First about different approaches, mostly in C# just because
 
----
 
 ### Traditional synchronous approach
 
@@ -52,6 +50,7 @@ static void Main(string[] args)
 
     Console.ReadLine();
 }
+
 private static void OnReadComplete(IAsyncResult result)
 {
     var stream = (FileStream)result.AsyncState;
@@ -62,7 +61,7 @@ private static void OnReadComplete(IAsyncResult result)
 ```
 
 ' callback hell
-' two entcopled methods Begin and End
+' two not coupled methods Begin and End
 
 ---
 
@@ -80,7 +79,7 @@ private static void OnReadComplete(IAsyncResult result)
 
 ### APM
 
-APM with lambda indstead of separate method
+APM with lambda instead of separate method
 
 ```csharp
 static void Main(string[] args)
@@ -110,7 +109,7 @@ static void Main(string[] args)
 
 - Task-based Asynchronous Programming
 - [System.Threading.Tasks.Task<TResult>](https://docs.microsoft.com/en-us/dotnet/api/system.threading.tasks.task)
-- Promice or Future in other languages
+- `Promise` or `Future` in other languages
 
 ---
 
