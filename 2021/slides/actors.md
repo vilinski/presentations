@@ -837,7 +837,7 @@ Host.CreateDefaultBuilder(args)
 
 # Links
 
-- [Slides](https://vilinski.pages.ifm-sw.net/CodeQualityNotes/actors.html)
+- [Slides](https://vilinski.github.io/presentations/2021/slides/actors.html)
 - [Video](https://short.ifm.com/1eoau)
 - [Akka](https://getakka.net)
   - https://github.com/petabridge/petabridge-dotnet-new
