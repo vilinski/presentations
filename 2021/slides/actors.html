@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Andreas Vilinski">
+  <meta name="author" content="ifm">
+  <title>Actor Systems</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4//dist/reset.css">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4//dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        background-color: #232629;
+        color: #7a7c7d;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #7a7c7d;  padding-left: 4px; }
+    div.sourceCode
+      { color: #cfcfc2; background-color: #232629; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #cfcfc2; } /* Normal */
+    code span.al { color: #95da4c; background-color: #4d1f24; font-weight: bold; } /* Alert */
+    code span.an { color: #3f8058; } /* Annotation */
+    code span.at { color: #2980b9; } /* Attribute */
+    code span.bn { color: #f67400; } /* BaseN */
+    code span.bu { color: #7f8c8d; } /* BuiltIn */
+    code span.cf { color: #fdbc4b; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #3daee9; } /* Char */
+    code span.cn { color: #27aeae; font-weight: bold; } /* Constant */
+    code span.co { color: #7a7c7d; } /* Comment */
+    code span.cv { color: #7f8c8d; } /* CommentVar */
+    code span.do { color: #a43340; } /* Documentation */
+    code span.dt { color: #2980b9; } /* DataType */
+    code span.dv { color: #f67400; } /* DecVal */
+    code span.er { color: #da4453; text-decoration: underline; } /* Error */
+    code span.ex { color: #0099ff; font-weight: bold; } /* Extension */
+    code span.fl { color: #f67400; } /* Float */
+    code span.fu { color: #8e44ad; } /* Function */
+    code span.im { color: #27ae60; } /* Import */
+    code span.in { color: #c45b00; } /* Information */
+    code span.kw { color: #cfcfc2; font-weight: bold; } /* Keyword */
+    code span.op { color: #cfcfc2; } /* Operator */
+    code span.ot { color: #27ae60; } /* Other */
+    code span.pp { color: #27ae60; } /* Preprocessor */
+    code span.re { color: #2980b9; background-color: #153042; } /* RegionMarker */
+    code span.sc { color: #3daee9; } /* SpecialChar */
+    code span.ss { color: #da4453; } /* SpecialString */
+    code span.st { color: #f44f4f; } /* String */
+    code span.va { color: #27aeae; } /* Variable */
+    code span.vs { color: #da4453; } /* VerbatimString */
+    code span.wa { color: #da4453; } /* Warning */
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js@^4//dist/theme/black.css" id="theme">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide">
+  <h1 class="title">Actor Systems</h1>
+  <p class="author">Andreas Vilinski</p>
+  <p class="author">ifm</p>
+</section>
+
+<section id="agenda" class="title-slide slide level1">
+<h1>Agenda</h1>
+<ul>
+<li class="fragment">Woher kommt ein Aktor</li>
+<li class="fragment">Beweggründe</li>
+<li class="fragment">Was ist ein Aktor</li>
+<li class="fragment">Wann ist er nützlich</li>
+<li class="fragment">Was zu beachten</li>
+<li class="fragment">Vergleich der Implementierungen</li>
+</ul>
+<aside class="notes">
+<ul>
+<li>Aktorsystem ist ein Pattern für die asynchrone programmierung. Es war schon mein Ziel das zu erzählen um meine praktischen Erfahrungen damit zu Teilen. Es könnte sein dass einige davon schon gehört haben, wissen aber nicht wie oder wo es überhaupt nützlich ist.</li>
+<li>Es ist einwenig mehr zu erzählen im Vergleich zu einem typischen OOP pattern wie Mediator. Ich versuche mich möglichst kurz zu fassen. Trotzdem möchte ich in die Zeit zurück greifen um zu erklären warum der Aktor so ist wie er ist.</li>
+<li>Ich erkläre die grundlegende Bestandteile von einem Aktor-System</li>
+<li>Welche probleme man damit lösen kann, inklusive bereits existierende in moneo-Kontext</li>
+<li>Und zum Schluss was man bei der Benutzung beachten sollte</li>
+<li>und welche Implementierungen unter .NET existieren</li>
+</ul>
+</aside>
+</section>
+
+<section>
+<section id="prähistorische-fakten" class="title-slide slide level1" data-background-image="images/dinosaurs.webp">
+<h1 data-background-image="images/dinosaurs.webp">Prähistorische Fakten</h1>
+<ul>
+<li class="fragment">Vorgeschlagen 1973
+<ul>
+<li class="fragment">Erlang 1986</li>
+<li class="fragment">Akka (JVM, Scala) 2009</li>
+<li class="fragment">Akka.NET (C#)</li>
+<li class="fragment">inzwischen in vielen Programmiersprachen</li>
+</ul></li>
+</ul>
+<aside class="notes">
+<p>Mögliche Annahme dass es um ein neues Hype handelt sind falsch. Der Pattern war bereits fast vor 50 jahre vorgeschlagen Erste Implementierung ist auch schon 35 Jahren her Am 1986 zuerst implementiert von Joe Armstrong, der damals bei Ericsson gearbeitet hat.</p>
+</aside>
+</section>
+<section id="herkunft" class="slide level2" data-background-image="images/dinosaurs.webp">
+<h2 data-background-image="images/dinosaurs.webp">Herkunft</h2>
+<figure>
+<img data-src="https://proto.actor/assets/img/asynkron/network-big.png" alt="CPUs and shared memory" /><figcaption aria-hidden="true">CPUs and shared memory</figcaption>
+</figure>
+<aside class="notes">
+<p>Erstanden ist das System in der Zeiten wo Compouter noch gross und Teuer wie eine Wohnung waren Die damalige Architektur war viele schwachen CPUs in einem Mainframe und der Kommunikation über beschreiben der ausgewiesenen Speicherbeireiche in einem gemeinsamen Speicher. Was wie Altlast aussieht funktioniert bis heute noch sehr gut.</p>
+</aside>
+</section>
+<section id="section" class="slide level2" data-background-image="images/joe-armstrong-blog.jpg">
+<h2 data-background-image="images/joe-armstrong-blog.jpg"> </h2>
+<figure>
+<img data-src="images/Ericsson-AXD-301.png" class="fragment" data-transition="fade-in" alt="AXD-301" /><figcaption aria-hidden="true">AXD-301</figcaption>
+</figure>
+</section></section>
+<section>
+<section id="beweggründe" class="title-slide slide level1">
+<h1>Beweggründe</h1>
+<ul>
+<li class="fragment">das Ende der Moore’s Law-Periode</li>
+<li class="fragment">Amdal-Gesetzt muss berücksichtigt werden</li>
+<li class="fragment">Diskrepanz zw. OOP und Prozessen in der realen Welt</li>
+<li class="fragment">Programmiersprachen ohne OOP</li>
+<li class="fragment">Stateless - erstrebenswert, aber nicht immer möglich</li>
+</ul>
+<aside class="notes">
+<p>Auf dem Weg zum einem Leistungsfähigem system gibt es leider ein paar Dinge zu beachten - Der Moor-Law scheint zu Ende zu sein - Amdal-Law ist was man bei der Bau von verteilten Systemen nicht umgehen kann - Es gibt ein Problem mit dem OOP-Ansatz, der heute als “klassisch” bezeichnet wird - Und es sind nicht alle Programmier sprachen OOP-First sind</p>
+</aside>
+</section>
+<section id="wachsende-anforderungen" class="slide level2">
+<h2>Wachsende Anforderungen</h2>
+<ul>
+<li class="fragment">Großes System 1995-2005
+<ul>
+<li class="fragment">10x servers</li>
+<li class="fragment">latency - seconds</li>
+<li class="fragment">maintenance stop 1-2h per month</li>
+<li class="fragment">Gigabytes</li>
+</ul></li>
+<li class="fragment">Großes System 2015-2021
+<ul>
+<li class="fragment">100x servers (cluster nodes)</li>
+<li class="fragment">latency - ms</li>
+<li class="fragment">maintenance stop - none</li>
+<li class="fragment">Petabytes</li>
+</ul></li>
+</ul>
+<aside class="notes">
+<p>TODO no fragments</p>
+</aside>
+</section>
+<section id="moore-law" class="slide level2">
+<h2>Moore Law</h2>
+<figure>
+<img data-src="./images/42-years-processor-trend.png" alt="schwarze rauten - anzahl der Kerne" /><figcaption aria-hidden="true">schwarze rauten - anzahl der Kerne</figcaption>
+</figure>
+<aside class="notes">
+<p>Seit einiger Zeit ist die Beschleunigung der CPU an die Physikalische Gesetze gestoßen. Die Frequenz kann man nicht mehr erhöhen, nur Anzahl der Kerne Um davon ein Vorteil zu haben muss aber das Programm entsprechend geschrieben werden.</p>
+</aside>
+</section>
+<section id="amdal-law" class="slide level2">
+<h2>Amdal law</h2>
+<figure>
+<img data-src="https://upload.wikimedia.org/wikipedia/commons/1/1e/Amdahl.png" alt="Amdahlsche Gesetz (WIKI)" /><figcaption aria-hidden="true">Amdahlsche Gesetz (WIKI)</figcaption>
+</figure>
+<aside class="notes">
+<p>Amdal law</p>
+<table>
+<thead>
+<tr class="header">
+<th># cores /parallelisierbarkeit %</th>
+<th>10</th>
+<th>100</th>
+<th>1000</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0 %</td>
+<td>10</td>
+<td>100</td>
+<td>1000</td>
+</tr>
+<tr class="even">
+<td>10 %</td>
+<td>5.26</td>
+<td>9.17</td>
+<td>9.91</td>
+</tr>
+<tr class="odd">
+<td>25 %</td>
+<td>3.08</td>
+<td>3.88</td>
+<td>4.00</td>
+</tr>
+<tr class="even">
+<td>40 %</td>
+<td>2.17</td>
+<td>2.46</td>
+<td>2.50</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>1967 Gene Amdahl (IBM)</li>
+<li>Gesamtzeit <code>&gt;=</code> langsamste sequentielle fragment</li>
+<li>Zeitgewinn begrenzt durch Parallelisierbarkeil</li>
+</ul>
+</aside>
+</section>
+<section id="oop-diskrepanz" class="slide level2">
+<h2>OOP Diskrepanz</h2>
+<ul>
+<li class="fragment"><p>Modernes OOP = Klassenhierarchie</p></li>
+<li class="fragment"><p>Alan Kay - “Mit OOP habe ich nicht C++ gemeint”</p></li>
+<li class="fragment"><p>Alan Kay’s OOP - Messaging und Incapsulation</p></li>
+<li class="fragment"><p>Modellierung <del>der realen Welt</del> des Puppentheaters</p></li>
+<li class="fragment"><p>OOP Duck doesn’t quack</p></li>
+<li class="fragment"><p>Viele Objekte, Zustände, asynchronen Aufrufe</p></li>
+<li class="fragment"><p>Zustandverwaltung und Kommunikation-Koordinierung, Thread-Schutz</p></li>
+</ul>
+<aside class="notes">
+<ul>
+<li>Dazu kommt noch das Problem, das OOP nicht ganz der realen Welt entspricht.</li>
+<li>Der Erfinder von OOP Alan Kay hat auch sich beschwert, dass er es anders gemeint hat. dass die Objekte die Nachrichten austauschen, und müssen nicht warten, bis die empfangen werden. Dieses Prinzip, Messaging, ist nur in SmallTalk und ObjectiveC verwendet worden</li>
+<li>Das synchrone Warten auf Antwort, ist ein nachteil in vielen Hinsichten. Es sind viele Objekte in system</li>
+</ul>
+</aside>
+</section>
+<section id="zustandverwaltung" class="slide level2">
+<h2>Zustandverwaltung</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cs"><code class="sourceCode cs"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">enum</span> SubscriptionState</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    Created<span class="op">,</span> DriverFound<span class="op">,</span> DriverInitialized<span class="op">,</span> BehaviorsInitialized<span class="op">,</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    Ready<span class="op">,</span> Starting<span class="op">,</span> Stopping<span class="op">,</span> Ok<span class="op">,</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    ReceiveError<span class="op">,</span> TransmitError<span class="op">,</span> StartupError<span class="op">,</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    Stopped<span class="op">,</span> Disposed<span class="op">,</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    ConnectionProblem<span class="op">,</span> Connecting<span class="op">,</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<aside class="notes">
+<p>Synchrone Method-Aufrufe sind nachteilig in vielen Hinsichten. Bei sehr vielen Objekte kann nur ein in einem Thread bearbeitet werden. Es sind tausende oder millionen von Objekten im Runtime, die ihr Zustand oder sogar Verhalten ändern. Multithreading ist hier eine Aushilfe, bringt aber gefahren mit der Inkonsistenz. Es wirt plötzlich ein Schutz gegen mehrfache Änderung gebraucht.</p>
+</aside>
+</section>
+<section id="naive-ansatz---lock" class="slide level2">
+<h2>1. naive Ansatz - <code>lock</code></h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> TreeController <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> Task <span class="fu">MoveNode</span><span class="op">(</span>Guid nodeId<span class="op">,</span> Guid toNode<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">lock</span> <span class="op">(</span>topologyTree<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>      <span class="co">// WORK ...</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<ul>
+<li class="fragment">Locks doesn’t scale
+<ul>
+<li class="fragment">mehrere service-instanzen == lock überflüssig</li>
+<li class="fragment">mehrere http-Requests == zu viele Resourcen sind eingefroren</li>
+</ul></li>
+</ul>
+<aside class="notes">
+<p>erste naive Anzatz sind semaphore, oder locks. Sowas ähnliches war vor kurzem noch in der Topologiemanagement. Um konsistenz im Topologiebaum zu bewahren braucht man einen Snapshot von einem kompletten Topologie, um die Knoten da drin zu bewegen Offensichtlich funktioniert der lock nicht, wenn wir mehrere Instanzen von einem Service haben. Das macht den lock überflüssig. Und das begrenzt die Performance eben in einem einzigen Service-Instanz - zu viele Entitäten sind eingefroren nur um konsistenz zu haben. Und die Reihenfolge von asynchronen Aufrufen ist niemals garantiert.</p>
+</aside>
+</section>
+<section id="dedicated-thread" class="slide level2" data-background-image="https://images.unsplash.com/photo-1616349761870-25501ed04173">
+<h2 data-background-image="https://images.unsplash.com/photo-1616349761870-25501ed04173">2. Dedicated thread</h2>
+<p>Beispiel - IFM.SDK</p>
+<ul>
+<li class="fragment">1 Device - 2 Threads</li>
+<li class="fragment">1000 Devices - 2000 Threads</li>
+<li class="fragment">.NET Core thread pool - 250 threads per core</li>
+<li class="fragment">signifikante Zeit wird beim Warten verbraucht</li>
+</ul>
+<aside class="notes">
+<p>Der zweite Ansatz wäre die requests in Commands umzuwandeln und die sequentiell in einem thread ausführen. Ein Separate thread - ein separater thread. Das ist beispielweise in IFM.SDK so implementiert, eine Bibliothek, die unser Drivermanagement service intern benutzt Hier ist ein Entität ein Device statt ein Knoten, was die sache nicht ändert Die rumänischen Kollegen haben es nach ihren aussage “aus performance Gründen” ein Thread pro überwachten Gerät angelegt. Das ist schon mal besser, die haben auch Benchmarks gemacht und 300k messages/s erreicht. Das ist schon besser als locks für kompletten Bestand, funktioniert aber auch solange anzahl der Geräte relative niedrig ist. Bei 800 Datasources hat das moneo schon probleme wegen zu vielen threads.</p>
+</aside>
+</section>
+<section id="threads-ausleihen" class="slide level2" data-background-image="https://images.unsplash.com/photo-1583758638276-95fff693eecf">
+<h2 data-background-image="https://images.unsplash.com/photo-1583758638276-95fff693eecf">3. Threads ausleihen</h2>
+<ul>
+<li class="fragment">Objekte wachen auf, nur für kurze Zeit Berechnung</li>
+<li class="fragment">Zustand-Änderungen werden sequentiell gemacht und nur vom Objekt selbst</li>
+<li class="fragment">Lokalität beim Prozess-Nachvollziehen</li>
+</ul>
+<aside class="notes">
+<p>Ein Thread verbraucht auch viele Resource. Windows reserviert 1MB physikalischen Speicher pro Thread. Jetzt wenn wir 1k Geräte haben verbrauchen wir 1GB RAM nur für Threads, die die meiste Zeit nur auf Nachrichten warten In IFM.SDK sind nicht consequent dedicated threads, sondern auch noch Tasks in normalen “async/await” thread pool. Ist ja klug. Das Ziel von Thread pools ist die Anzahl von Threads gering zu halten, um nicht zu oft switchen zu müssen. Die State-Machine, die C#-Compiler für async/await produziert hat aber auch nachteile, weil es auch alloziert und zerstört werden muss</p>
+<p>Jetzt sind wir langsam bei der Actor-Model gelandet - Ein aktor hat einen eigenen Thread, der nur dann ausgeliehen ist, wenn die Nachrichten kommen Er wacht kurz auf um eine Nachricht zu bearbeiten. - Die Nachrichten werden dazu streng sequentiell bearbeitet. Beides bedeutet, dass interne Zustand vom Aktor nicht thread-safe sein muss. Z.B. man braucht kein ConcurrentDictionary, es darf normale Dictionary sein</p>
+</aside>
+</section></section>
+<section>
+<section id="actor" class="title-slide slide level1" data-background-image="https://proto.actor/docs/images/actor.png">
+<h1 data-background-image="https://proto.actor/docs/images/actor.png">Actor</h1>
+<p><br></p>
+</section>
+<section id="actor-kann" class="slide level2" data-background-image="https://proto.actor/docs/images/actor.png">
+<h2 data-background-image="https://proto.actor/docs/images/actor.png">Actor kann</h2>
+<div class="columns">
+<div class="column" style="width:30%;">
+<p><br></p>
+</div><div class="column" style="width:70%;">
+<p><br></p>
+<ul>
+<li class="fragment"></li>
+<li class="fragment">(nur) mit PID identifiziert/adressiert werden (Ortstransparenz)</li>
+<li class="fragment">(nur) sein eigenes Zustand und Verhalten ändern</li>
+<li class="fragment"><strong>Sequentiell</strong> Nachrichten bearbeiten</li>
+<li class="fragment">Nachrichten an die anderen schicken</li>
+<li class="fragment">andere Aktoren starten und überwachen (supervise)</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="aktor-vs-klassisches-oop" class="slide level2">
+<h2>Aktor vs klassisches OOP</h2>
+<h4 id="objekt">Objekt</h4>
+<ul>
+<li class="fragment">sind nicht lebendig, gehören nicht sich selbst</li>
+<li class="fragment">Thread Besitzer (SubscriptionManager) - besitzt die Kontrolle (Subscription)</li>
+</ul>
+<h4 id="aktor">Aktor</h4>
+<ul>
+<li class="fragment">fast immer schlafendes Prozess</li>
+<li class="fragment">kontrolliert (<strong>NUR</strong>) sein eigenes Zustand</li>
+<li class="fragment">kommuniziert asynchronen mit Nachrichten</li>
+<li class="fragment">“Tell, don’t Ask” Prinzip</li>
+<li class="fragment">schickt Nachrichten, (meistens) keine Anfragen</li>
+<li class="fragment">auf die möglicherweise eine Antwort folgt</li>
+</ul>
+</section>
+<section id="vorteile" class="slide level2">
+<h2>Vorteile</h2>
+<ul>
+<li class="fragment">message-driven design</li>
+<li class="fragment">funktionale Transformation: <code>A -&gt; f -&gt; B</code></li>
+<li class="fragment">strenge Isolation und Entkopplung</li>
+<li class="fragment">kein manuelles Thread-Management</li>
+<li class="fragment">kein Schutzmechanismus für Public-Eigenschaften</li>
+<li class="fragment">keine Race-Conditions</li>
+</ul>
+</section>
+<section id="mögliche-einsatzbeispiele" class="slide level2">
+<h2>Mögliche Einsatzbeispiele</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Aktor als Entität</p>
+<ul>
+<li class="fragment">Device</li>
+<li class="fragment">Subscription</li>
+<li class="fragment">Eingeloggte User</li>
+<li class="fragment">Ticket</li>
+<li class="fragment">Element der Workflow</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<p>Aktor als Manager</p>
+<ul>
+<li class="fragment">Rohdatenaufzeichnung</li>
+<li class="fragment">DB provider - read/write</li>
+<li class="fragment">Notification-Sender</li>
+<li class="fragment">SignalR-Hub</li>
+<li class="fragment">Limit-Watcher</li>
+</ul>
+</div>
+</div>
+</section></section>
+<section>
+<section id="hello-world" class="title-slide slide level1">
+<h1>Hello world</h1>
+<div class="sourceCode" id="cb3"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Hello <span class="op">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="fu">Hello</span><span class="op">(</span><span class="dt">string</span> who<span class="op">)</span> <span class="op">=&gt;</span> Who <span class="op">=</span> who<span class="op">;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="dt">string</span> Who <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="op">}</span> <span class="co">// no setter</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">//public record Hello(string who);</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> HelloActor <span class="op">:</span> IActor <span class="op">{</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> Task <span class="fu">ReceiveAsync</span><span class="op">(</span>IContext context<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">object</span> msg <span class="op">=</span> context<span class="op">.</span><span class="fu">Message</span><span class="op">;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> <span class="op">(</span>msg <span class="kw">is</span> Hello r<span class="op">)</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>      Console<span class="op">.</span><span class="fu">WriteLine</span><span class="op">(</span>$<span class="st">&quot;Hello {r.Who}&quot;</span><span class="op">);</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> Task<span class="op">.</span><span class="fu">CompletedTask</span><span class="op">;</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<aside class="notes">
+<ul>
+<li>Man braucht eine Menge von Nachrichten-Typen. Umso schade ist es dass C# erfordert viel boilerplate um einfache Nachrichten-Klassen zu definieren. Wobei in Scala und F# ist es Einzeiler</li>
+<li>Nachrichten sind immutable. In C# kann es nur mit nicht-default constructor gemacht werden</li>
+<li>C# 9.0 hat endlich records, die zwar immer noch nicht gut genug sind, aber schon viel kürzer</li>
+<li>IActor implementiert eine einzige Methode Receive funtkion. Die hat zwar <code>Async</code> suffix, ist aber technisch single-threaded. <code>async</code> ist entfernt um warnung zu vermeiden.</li>
+<li>weil actor ist +- Kopie von Erlang, wo es gar keine Typen sind. <code>context.Message</code> ist hier auch ein <code>object</code>. Um zw. Nachrichten zu unterscheiden braucht man pattern-matching. Bisher hat C# nur switch mit strings und integers. Es gibt aber eine Entwicklung Zumindest kann man inzwischen switch expression an Typen machen. Solange kann man bekannte Shclüsselwort <code>is</code> benutzen.</li>
+<li>Es gibt noch eine Anzahl von vordefinierten, sogenannten System-Nachrichten, auf die man auch reagieren kann Sonst wenn es kein bekannter Typ ist wird es einfach ignoriert. Oder z.B. in Dead-Letter geschickt.</li>
+</ul>
+</aside>
+</section>
+<section id="deklarative-props" class="slide level2">
+<h2>Deklarative Props</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> system <span class="op">=</span> <span class="kw">new</span> <span class="fu">ActorSystem</span><span class="op">();</span> <span class="co">// (1)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">//var props = Props.FromFunc(c =&gt; {...});</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> props <span class="op">=</span> Props<span class="op">.</span><span class="fu">FromProducer</span><span class="op">(()</span> <span class="op">=&gt;</span> <span class="kw">new</span> <span class="fu">ParentActor</span><span class="op">())</span> <span class="co">// (2)</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">WithMailbox</span><span class="op">(</span>mailbox<span class="op">)</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">WithContextDecorator</span><span class="op">(</span>c <span class="op">=&gt;</span> <span class="kw">new</span> <span class="fu">LoggingDecorator</span><span class="op">(</span>c<span class="op">))</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">WithHashMapping</span><span class="op">(</span>Routing<span class="op">.</span><span class="fu">ConsistentHashMapping</span> akamai<span class="op">)</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">WithSenderMiddleware</span><span class="op">(</span>next <span class="op">=&gt;</span> <span class="op">{...})</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">WithChildSupervisorStrategy</span><span class="op">(</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">new</span> <span class="fu">OneForOneStrategy</span><span class="op">(</span>Decider<span class="op">.</span><span class="fu">Decide</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="kw">null</span><span class="op">));</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> pid <span class="op">=</span> system<span class="op">.</span><span class="fu">Root</span><span class="op">.</span><span class="fu">Spawn</span><span class="op">(</span>props<span class="op">);</span> <span class="co">// (3)</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>system<span class="op">.</span><span class="fu">Root</span><span class="op">.</span><span class="fu">Send</span><span class="op">(</span>pid<span class="op">,</span> <span class="kw">new</span> <span class="fu">Hello</span><span class="op">(</span><span class="st">&quot;ProtoActor&quot;</span><span class="op">));</span> <span class="co">// (4)</span></span></code></pre></div>
+<p>Aktor intern hat keine Info darüber</p>
+</section>
+<section id="behavior" class="slide level2">
+<h2>Behavior</h2>
+<div class="sourceCode" id="cb5"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Necromant <span class="op">:</span> IActor <span class="op">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">private</span> Behavior _behavior <span class="op">=</span> <span class="kw">new</span> <span class="fu">Behavior</span><span class="op">();</span> <span class="co">// (1)</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="fu">Necromant</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>      _behavior<span class="op">.</span><span class="fu">Become</span><span class="op">(</span>Resting<span class="op">);</span> <span class="co">// (2)</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> Task <span class="fu">ReceiveAsync</span><span class="op">(</span>IContext ctx<span class="op">)</span> <span class="op">=&gt;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>      _behavior<span class="op">.</span><span class="fu">ReceiveAsync</span><span class="op">(</span>ctx<span class="op">);</span> <span class="co">// (3)</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">private</span> Task <span class="fu">Resting</span><span class="op">(</span>IContext ctx<span class="op">)</span> <span class="op">{...}</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section id="behavior-1" class="slide level2">
+<h2>Behavior</h2>
+<div class="sourceCode" id="cb6"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Necromant <span class="op">:</span> IActor <span class="op">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="op">...</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">private</span> Task <span class="fu">Resting</span><span class="op">(</span>IContext context<span class="op">)</span> <span class="op">{...}</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">switch</span> <span class="op">(</span>context<span class="op">.</span><span class="fu">Message</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>      <span class="kw">case</span> SwordHit damage<span class="op">:</span> <span class="co">// (1) Info von der Nachricht</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        _health <span class="op">-=</span> damage<span class="op">;</span> <span class="co">// (2) Zustand</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> nextBehavior <span class="op">=</span> <span class="op">(</span>_health <span class="op">&gt;</span> <span class="fl">0.5</span><span class="op">)</span> <span class="op">?</span> Fighting <span class="op">:</span> Run<span class="op">;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        _behavior<span class="op">.</span><span class="fu">Become</span><span class="op">(</span>nextBehavior<span class="op">);</span> <span class="co">// (3) Behavior</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>      <span class="kw">case</span> Touch _ <span class="op">:</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        context<span class="op">.</span><span class="fu">Respond</span><span class="op">(</span><span class="st">&quot;Cold&quot;</span><span class="op">);</span> <span class="co">// (4) Antwort an Sender</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> Task<span class="op">.</span><span class="fu">CompletedTask</span><span class="op">;</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">private</span> Task <span class="fu">Fighting</span><span class="op">(</span>IContext ctx<span class="op">)</span> <span class="op">{</span> <span class="op">...</span> <span class="op">}</span></span></code></pre></div>
+</section>
+<section id="tell-dont-ask" class="slide level2">
+<h2><code>Tell, don't Ask</code></h2>
+<ul>
+<li class="fragment">Einzige Kommunikationsweg - Nachrichten</li>
+<li class="fragment"><code>Send</code> - Tell by default</li>
+<li class="fragment"><code>RequestAsync</code> - Ask nur ven nicht anders geht.
+<ul>
+<li class="fragment">z.B. <code>HttpRequest</code></li>
+<li class="fragment">Empfang anhalten bis die Antwort kommt</li>
+<li class="fragment">thread bleibt reserviert</li>
+<li class="fragment"><code class="sourceCode cs">await ctx<span class="op">.</span><span class="fu">RequestAsync</span><span class="op">(</span>rcvPID<span class="op">);</span></code></li>
+<li class="fragment"><code class="sourceCode cs">ctx<span class="op">.</span><span class="fu">Respond</span><span class="op">(</span><span class="kw">new</span> <span class="fu">Answer</span><span class="op">(</span><span class="dv">42</span><span class="op">));</span></code></li>
+</ul></li>
+</ul>
+</section>
+<section id="controller-tell" class="slide level2">
+<h2>Controller tell</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="op">[</span>ApiController<span class="op">,</span> <span class="fu">Route</span><span class="op">(</span><span class="st">&quot;[controller]&quot;</span><span class="op">)]</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> ActorController <span class="op">:</span> ControllerBase <span class="op">{</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">[</span>HttpPost<span class="op">]</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> ActionResult <span class="fu">AddPanel</span><span class="op">(</span><span class="dt">string</span> name<span class="op">)</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">{</span> <span class="co">// synchron ist ok</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">var</span> msg <span class="op">=</span> <span class="kw">new</span> <span class="fu">AddPanelRequest</span><span class="op">(</span>name<span class="op">);</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    SystemActors<span class="op">.</span><span class="fu">SignalRActor</span><span class="op">.</span><span class="fu">Send</span><span class="op">(</span>msg<span class="op">);</span> <span class="co">// tell</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="fu">Accepted</span><span class="op">();</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<aside class="notes">
+<p>Hier ist ein Beispiel wie man ein actor im Controller benutzen kann. Bemerke dass es kein async/await benötigt, sonst würde C# Compiler eine Warning produzieren. In akka und akka.net heißen die Methoden wirklich <code>Tell</code> und <code>Ask</code> Hier ist beispiel mit <code>proto.actor</code>, <code>Send</code> ist eine synchrone operation, die die Kontrolle sofort zurückgibt. Wenn jemand RabbitMQ Client benutzt hat, dort ist publish genauso eine synchrone methode. Der Controller kann in dem Fall HTTP Code 202 zurückgeben (accepted). Bedeutet request angenommen, Message ist unterwegs, kann auch länger dauern, ohne dass auf request gewartet werden muss. Hier ist es unter SystemActors.SignalRActor eine feste PIC gespeichert. Könnte eine statische Klasse oder Singleton sein Für skalierbarkeit kann dahinter ein pool von aktoren sein, die parallel http requests bearbeiten.</p>
+</aside>
+</section>
+<section id="controller-ask" class="slide level2">
+<h2>Controller ask</h2>
+<div class="sourceCode" id="cb8"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="fu">ActorController</span><span class="op">(</span>ActorSystem actorSystem<span class="op">)</span> <span class="op">=&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  _sys <span class="op">=</span> actorSystem<span class="op">;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="op">[</span>HttpPost<span class="op">]</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> async Task<span class="op">&lt;</span>Guid<span class="op">&gt;</span> <span class="fu">AddPanel</span><span class="op">(</span><span class="dt">string</span> name<span class="op">)</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">var</span> props <span class="op">=</span> _sys<span class="op">.</span><span class="fu">DI</span><span class="op">().</span><span class="fu">PropsFor</span><span class="op">&lt;</span>RequestActor<span class="op">&gt;();</span> <span class="co">// (1) DI</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">var</span> pid <span class="op">=</span> _sys<span class="op">.</span><span class="fu">Root</span><span class="op">.</span><span class="fu">Spawn</span><span class="op">(</span>props<span class="op">);</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">var</span> msg <span class="op">=</span> <span class="kw">new</span> <span class="fu">AddPanel</span><span class="op">(</span>name<span class="op">);</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">var</span> timeout <span class="op">=</span> TimeSpan<span class="op">.</span><span class="fu">FromSeconds</span><span class="op">(</span><span class="dv">10</span><span class="op">);</span> <span class="co">// (2)</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">var</span> panel <span class="op">=</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    await _sys<span class="op">.</span><span class="fu">Root</span><span class="op">.</span><span class="fu">RequestAsync</span><span class="op">&lt;</span>Added<span class="op">&gt;(</span>pid<span class="op">,</span> msg<span class="op">,</span> timeout<span class="op">);</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  await _sys<span class="op">.</span><span class="fu">Root</span><span class="op">.</span><span class="fu">StopAsync</span><span class="op">(</span>pid<span class="op">);</span> <span class="co">// (3) Stop it</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">return</span> panel<span class="op">.</span><span class="fu">Id</span><span class="op">;</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<aside class="notes">
+<p>Weil Actor leichtgewichtig ist, kann man für jeden http Request einen neuen starten. hier wird actor system decorator mit DI verwendet. D.h. actor benutzt DI container um eine instanz zu erzeugen Alternativ kann es ein festes PID sein, der auf alle requests antwortet. Für skalierbarkeit kann dahinter ein pool von aktoren sein, die parallel http requests bearbeiten. Auch ist es möglich DI zu nutzen. Wobei man verliert den Vorteil, dass keine Allocations für jeden request gemacht werden</p>
+</aside>
+</section>
+<section id="forward" class="slide level2">
+<h2>Forward</h2>
+<figure>
+<img data-src="images/forward.png" alt="Ask vs Forward" /><figcaption aria-hidden="true">Ask vs Forward</figcaption>
+</figure>
+</section>
+<section id="stash" class="slide level2">
+<h2>Stash</h2>
+<div class="sourceCode" id="cb9"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> Task <span class="fu">Paused</span><span class="op">(</span>IContext context<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">switch</span> <span class="op">(</span>context<span class="op">.</span><span class="fu">Message</span><span class="op">)</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Data _ <span class="op">:</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>          context<span class="op">.</span><span class="fu">Stash</span><span class="op">();</span> <span class="co">// (1) not handling yet</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Enough _<span class="op">:</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>          context<span class="op">.</span><span class="fu">UnstashAll</span><span class="op">();</span> <span class="co">// (2) into inbox again</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>          _behavior<span class="op">.</span><span class="fu">Become</span><span class="op">(</span>Idle<span class="op">);</span> <span class="co">// (3) don&#39;t collect anymore</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>          <span class="kw">return</span> Task<span class="op">.</span><span class="fu">CompletedTask</span><span class="op">;</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> Task<span class="op">.</span><span class="fu">CompletedTask</span><span class="op">;</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<aside class="notes">
+<p>Beispiel Echtzeit-Analyse Grafik anzeigen. Dann mchte der Benutzer es Pausieren, um die Laufende Daten anzuschauen Genau dieses Beispiel gibt es in der praktischen Übungen in der Akka-Bootcamp. Das verlinke ich später</p>
+</aside>
+</section></section>
+<section>
+<section id="performance" class="title-slide slide level1" data-background-image="https://images.unsplash.com/photo-1502855991536-374994f6291c">
+<h1 data-background-image="https://images.unsplash.com/photo-1502855991536-374994f6291c">Performance</h1>
+<p>Developer Laptop, 1 000 000 calls</p>
+<table>
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Zeit, s</th>
+<th>RPS msg/s</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>void</code> Method</td>
+<td>0.003</td>
+<td>300 M/s</td>
+</tr>
+<tr class="even">
+<td><code>int</code> Method</td>
+<td>0.004</td>
+<td>250M/s</td>
+</tr>
+<tr class="odd">
+<td><code>Task</code> Method</td>
+<td>1.864</td>
+<td>500K/s</td>
+</tr>
+<tr class="even">
+<td><code>Task&lt;int&gt;</code> Method</td>
+<td>1.790</td>
+<td>500K/s</td>
+</tr>
+<tr class="odd">
+<td>Akka.NET Tell</td>
+<td>0.233</td>
+<td>4M/s</td>
+</tr>
+<tr class="even">
+<td>Akka.NET Ask</td>
+<td>6.395</td>
+<td>150K/s</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="benchmarks-actorsysteme" class="slide level2" data-background-image="https://images.unsplash.com/photo-1502855991536-374994f6291c">
+<h2 data-background-image="https://images.unsplash.com/photo-1502855991536-374994f6291c">Benchmarks Actorsysteme</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Lib</th>
+<th>Remote</th>
+<th>Inproc</th>
+<th>SkyNet</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Erlang</td>
+<td>200k/s</td>
+<td>12 M/s</td>
+<td>0.75s</td>
+</tr>
+<tr class="even">
+<td>Akka</td>
+<td>110k/s</td>
+<td>38 M/s</td>
+<td>9.0s</td>
+</tr>
+<tr class="odd">
+<td>Akka.NET</td>
+<td>38k/s</td>
+<td>30 M/s</td>
+<td>12s</td>
+</tr>
+<tr class="even">
+<td>Proto.Actor Go</td>
+<td>2.4M/s</td>
+<td>120 M/s</td>
+<td>1.5s</td>
+</tr>
+<tr class="odd">
+<td>Proto.Actor C#</td>
+<td>2.5M/s</td>
+<td>125 M/s</td>
+<td>0.8s</td>
+</tr>
+<tr class="even">
+<td>Proto.Actor Kotlin</td>
+<td>2.7M/s</td>
+<td>160 M/s</td>
+<td>0.31s</td>
+</tr>
+</tbody>
+</table>
+</section></section>
+<section>
+<section id="error-handling" class="title-slide slide level1">
+<h1>Error handling</h1>
+<ul>
+<li class="fragment">Widerstandsfähigkeit (resilience)</li>
+<li class="fragment">Überwachung (supervision)</li>
+<li class="fragment">Isolation</li>
+<li class="fragment">deklarativ statt try/catch</li>
+<li class="fragment">Fail-Fast Prinzip</li>
+</ul>
+<aside class="notes">
+<p>da es in telekom zuerst projektiert war eine der Anforderungen war ausfallsicherheit Wenn ein Teil der Hardwäre ausfällt sollte es möglichst keine Auswirkung auf den Rest haben Der supervisor ist benachrichtigt und kann Maßnamen einleiten.</p>
+</aside>
+</section>
+<section id="exceptions-in-c" class="slide level2">
+<h2>Exceptions in <code>C#</code></h2>
+<div class="sourceCode" id="cb10"><pre class="sourceCode csharp lineNubmers"><code class="sourceCode cs"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  connection<span class="op">.</span><span class="fu">ExecuteCommand</span><span class="op">(</span>cmd<span class="op">);</span> <span class="co">// eigentliche Arbeit</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="kw">catch</span> <span class="op">(</span>SqlException ex<span class="op">)</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Retry ?</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Recover db ?</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">// wird die gleiche Connection woanders benutzt wird?</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="kw">catch</span> <span class="op">(</span>Exception ex<span class="op">)</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Alles andere abfangen?</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section id="verzögerte-ausführung" class="slide level2">
+<h2>Verzögerte Ausführung</h2>
+<div class="sourceCode" id="cb11"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>queue<span class="op">.</span><span class="fu">Subscribe</span><span class="op">(</span>x <span class="op">=&gt;</span> <span class="fu">HandleMessage</span><span class="op">(</span>x<span class="op">));</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> <span class="fu">HandleMessage</span><span class="op">(</span>QueueMessage msg<span class="op">)</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Process</span><span class="op">(</span>msg<span class="op">);</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  msg<span class="op">.</span><span class="fu">Ack</span><span class="op">();</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="kw">catch</span> <span class="op">(</span>QueueException ex<span class="op">)</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Reconnect? Unsubscribe? wir sind in anderem thread!</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section id="exception-handling" class="slide level2">
+<h2>Exception handling</h2>
+<p><a href="http://www.lighterra.com/papers/exceptionsharmful">Exception handling considered harmful</a></p>
+<blockquote>
+<p>Exception handling introduces a hidden, “out-of-band” control flow possibility at essentially every line of code.</p>
+</blockquote>
+<p>Jason Patterson</p>
+</section>
+<section id="supervisor-strategien" class="slide level2">
+<h2>Supervisor strategien</h2>
+<figure>
+<img data-src="https://proto.actor/assets/img/asynkron/supervision-big.png" alt=" " /><figcaption aria-hidden="true"> </figcaption>
+</figure>
+</section>
+<section id="supervisor-strategien-1" class="slide level2">
+<h2>Supervisor strategien</h2>
+<ul>
+<li class="fragment">Supervisor entschiedet was zu tun ist
+<ul>
+<li class="fragment">Neustarten (default)</li>
+<li class="fragment">Weiterführen</li>
+<li class="fragment">Stoppen</li>
+<li class="fragment">Fehler weiter nach oben eskalieren</li>
+</ul></li>
+</ul>
+</section>
+<section id="beispiel" class="slide level2">
+<h2>Beispiel</h2>
+<div class="sourceCode" id="cb12"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> strategy <span class="op">=</span> Strategy<span class="op">.</span><span class="fu">OneForOne</span><span class="op">((</span>ex <span class="op">=&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">switch</span> ex <span class="op">{</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">case</span> ArgumentNullException<span class="op">:</span> <span class="kw">return</span> Stop<span class="op">;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">case</span> ArgumentOutOfRangeException<span class="op">:</span> <span class="kw">return</span> Restart<span class="op">;</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">case</span> ArgumentException<span class="op">:</span> <span class="kw">return</span> Resume<span class="op">;</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">default</span><span class="op">:</span> <span class="kw">return</span> Escalate<span class="op">},</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="dv">3</span><span class="op">,</span> TimeSpan<span class="op">.</span><span class="fu">FromSeconds</span><span class="op">(</span><span class="fl">10.0</span><span class="op">)));</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> props <span class="op">=</span> Props<span class="op">.</span><span class="fu">FromProducer</span><span class="op">(...)</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">WithSupervisionStrategy</span><span class="op">(</span>strategy<span class="op">);</span></span></code></pre></div>
+</section>
+<section id="anwendung-der-strategie" class="slide level2">
+<h2>Anwendung der Strategie</h2>
+<ul>
+<li class="fragment">Exception im <code>Receive</code> - Aktor hält Arbeit an</li>
+<li class="fragment">Supervisor
+<ul>
+<li class="fragment">wird informiert über Fehler und Aktor</li>
+<li class="fragment">entscheidet was zu tun ist, z.B. bei Neustart:
+<ul>
+<li class="fragment">stoppt den Aktor, aber behält sein Mailbox</li>
+<li class="fragment">startet neue Instanz mit Props und Mailbox</li>
+</ul></li>
+<li class="fragment">oder
+<ul>
+<li class="fragment">Weiterfahren wie nichts passiert</li>
+<li class="fragment">weiter nach oben eskalieren</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section id="skalierung" class="slide level2">
+<h2>Skalierung</h2>
+<p>Wenn sequentiell nicht genug ist</p>
+<ul>
+<li class="fragment">Round robin</li>
+<li class="fragment">smallest mailbox</li>
+<li class="fragment">consisten hashing</li>
+<li class="fragment">boradcast</li>
+<li class="fragment">scatter gather first completed</li>
+<li class="fragment">…</li>
+<li class="fragment">custom</li>
+</ul>
+</section>
+<section id="persistenz" class="slide level2">
+<h2>Persistenz</h2>
+<figure>
+<img data-src="images/Persistenz.png" alt="Actor Persistenz" /><figcaption aria-hidden="true">Actor Persistenz</figcaption>
+</figure>
+</section>
+<section id="persistenz-1" class="slide level2">
+<h2>Persistenz</h2>
+<ul>
+<li class="fragment">deklarativ über Props oder Attribute (MS Orleans)</li>
+<li class="fragment">Storage interface oder normale DbProvider</li>
+<li class="fragment">Funktionen nach event sourcing</li>
+<li class="fragment">Event journal entspricht dem CQRS</li>
+<li class="fragment">Traditionelle relationale DB für zusätzliche Anfragen</li>
+</ul>
+</section>
+<section id="no-silver-bullet" class="slide level2">
+<h2>No silver bullet</h2>
+<ul>
+<li class="fragment">Testen?
+<ul>
+<li class="fragment">Leicht zu ersetzen/mocken, auch ohne Interfaces/Ableitungen</li>
+<li class="fragment">isolierte Logik - isolierte tests</li>
+</ul></li>
+<li class="fragment">Stack trace - limitiert auf ein Aktor</li>
+<li class="fragment">kein Interface, API nur über Message-Typen</li>
+<li class="fragment">kein Cluster mitglied - kein Nachrichten-Austausch</li>
+<li class="fragment">überflüssig ohne Zustand oder Verteilung</li>
+<li class="fragment">DI - langlebige Instanzen (vorsicht EF DB context)</li>
+</ul>
+</section>
+<section id="silver-bullet" class="slide level2">
+<h2>Silver bullet</h2>
+<ul>
+<li class="fragment">Parallele ausführung</li>
+<li class="fragment">Deklarative Kontrolle von Zustandsänderung</li>
+<li class="fragment">Reaktive systeme</li>
+<li class="fragment">Skalierbare verteilte systeme</li>
+</ul>
+</section></section>
+<section id="sprachen-und-bibliotheken" class="title-slide slide level1">
+<h1>Sprachen und Bibliotheken</h1>
+<ul>
+<li class="fragment">Programmiersprachen
+<ul>
+<li class="fragment">Erlang - Elixir - Pony - Scala(*)</li>
+</ul></li>
+<li class="fragment">Bibliotheken
+<ul>
+<li class="fragment">Akka (java/scala)</li>
+<li class="fragment">Akka.NET, MS Orleans, Proto.Actor (C#/F#)</li>
+<li class="fragment">F# MailboxProcessor (in-prozess)</li>
+</ul></li>
+</ul>
+</section>
+
+<section>
+<section id="varianten-für-.net-core" class="title-slide slide level1">
+<h1>3 Varianten für .NET-Core</h1>
+<ul>
+<li class="fragment">Petabridge Akka.NET</li>
+<li class="fragment">Microsoft Orleans</li>
+<li class="fragment">Asynkron Proto.Aktor</li>
+</ul>
+</section>
+<section id="petabridge-akka.net" class="slide level2">
+<h2>Petabridge Akka.NET</h2>
+<ul>
+<li class="fragment">direkter Port Erlang -&gt; JVM -&gt; .NET</li>
+<li class="fragment">am meisten an Erlang orientiert</li>
+<li class="fragment">battle-tested</li>
+<li class="fragment">Akka.Streams</li>
+<li class="fragment"><a href="https://www.nuget.org/packages?q=akka.net">166 NuGets</a></li>
+</ul>
+</section>
+<section id="akka.net-beispiel" class="slide level2">
+<h2>Akka.NET Beispiel</h2>
+<div class="sourceCode" id="cb13"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> HomeController <span class="op">:</span> Controller <span class="op">{</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="op">[</span>HttpPost<span class="op">]</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> async Task<span class="op">&lt;</span>ActionResult<span class="op">&gt;</span> <span class="fu">SaveDashboard</span><span class="op">(</span><span class="dt">string</span> uri<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    SystemActors<span class="op">.</span><span class="fu">SignalRActor</span><span class="op">.</span><span class="fu">Tell</span><span class="op">(</span>d<span class="op">,</span> ActorRefs<span class="op">.</span><span class="fu">Nobody</span><span class="op">);</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="fu">Accepted</span><span class="op">();</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">[</span>HttpGet<span class="op">]</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> async Task<span class="op">&lt;</span>ActionResult<span class="op">&gt;</span> <span class="fu">SendRequest</span><span class="op">(</span><span class="dt">string</span> uri<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">var</span> str <span class="op">=</span> await SystemActors<span class="op">.</span><span class="fu">SignalRActor</span><span class="op">.</span><span class="fu">Ask</span><span class="op">(</span>uri<span class="op">,</span> TimeSpan<span class="op">.</span><span class="fu">FromSeconds</span><span class="op">(</span><span class="dv">1</span><span class="op">));</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="fu">ContentResult</span><span class="op">()</span> <span class="op">{</span>Content <span class="op">=</span> str<span class="op">};</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<aside class="notes">
+<p>Hier ist ein Beispiel wie man ein Actor in</p>
+</aside>
+</section>
+<section id="petabridge-akka.net-nachteile" class="slide level2">
+<h2>Petabridge Akka.NET Nachteile</h2>
+<ul>
+<li class="fragment">Lebenszyklus-Verwaltung nötig</li>
+<li class="fragment">Umständliche <code>Receive</code> Definition</li>
+<li class="fragment">hacks in Netzwerk-Stack</li>
+<li class="fragment">andere Altlasten</li>
+</ul>
+</section>
+<section id="microsoft-orleans" class="slide level2">
+<h2>Microsoft Orleans</h2>
+<ul>
+<li class="fragment">kein Mailbox - verstecktes Messaging</li>
+<li class="fragment">kein PID - normale Objekt-References</li>
+<li class="fragment">kein Supervision - try/catch</li>
+<li class="fragment">keine Lebenszyklus-Verwaltung
+<ul>
+<li class="fragment">max 30s Durchlauf</li>
+<li class="fragment">nach 30 min deaktivierung</li>
+</ul></li>
+<li class="fragment">Timers, Reminders</li>
+<li class="fragment">Cloud-First Objekte, cluster oder in-prozess</li>
+<li class="fragment">MSBuild Code-Generator</li>
+<li class="fragment"><a href="https://www.nuget.org/packages?q=orleans">286 NuGets</a></li>
+</ul>
+<aside class="notes">
+<p>MS Orleans hat einige Eigenschaften des klassischen Actor-System “verraten”. - Es gibt kein Mailbox, sondern Nachrichten werden scheduled direkt propagiert. - kein PID: code sieht aus wie ganz normale Objekt mit async methoden. Dahinter wird messaging durch code generation gemacht. - keine Hierarghie -&gt; akka-style supervision nicht mehr möglich. Stattdessen klassischer try/catch</p>
+<ul>
+<li>Totale Ortstransparenz bedeutet es gibt kein Kontrolle in welchem Node das Grain aktiviert wird. Man schreibt code in async/await style aber man ist vorbereitet auf Verteilung.</li>
+<li>Dafür gibt es zwei wichtige Vorteiel gegenüber akka.net: Es heisst sogar manchmal dass Grain ist nicht ein Aktor Für Benutzer existiert ein Actor immer und</li>
+</ul>
+</aside>
+</section>
+<section id="microsoft-orleans-1" class="slide level2">
+<h2>Microsoft Orleans</h2>
+<h3 id="wichtige-unterschiede">Wichtige Unterschiede</h3>
+<ul>
+<li class="fragment">Virtual Actor - automatische Lebenszyklusverwaltung</li>
+<li class="fragment">Unique-ID - smart cache pattern</li>
+</ul>
+</section>
+<section id="orleans-controller" class="slide level2">
+<h2>Orleans controller</h2>
+<div class="sourceCode" id="cb14"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="fu">WeatherController</span><span class="op">(</span>IClusterClient cluster<span class="op">)</span> <span class="op">=&gt;</span> _cluster</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="op">[</span>HttpGet<span class="op">]</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> async Task<span class="op">&lt;</span>AsyncResult<span class="op">&gt;</span> <span class="fu">GetAsync</span><span class="op">(</span><span class="dt">string</span> city<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">var</span> city <span class="op">=</span> _cluster<span class="op">.</span><span class="fu">GetGrain</span><span class="op">&lt;</span>ICityGrain<span class="op">&gt;(</span>city<span class="op">);</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">return</span> await city<span class="op">.</span><span class="fu">GetForecastAsync</span><span class="op">();</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+</section>
+<section id="deploy-to-k8s" class="slide level2">
+<h2>Deploy to k8s</h2>
+<div class="sourceCode" id="cb15"><pre class="sourceCode csharp"><code class="sourceCode cs"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>Host<span class="op">.</span><span class="fu">CreateDefaultBuilder</span><span class="op">(</span>args<span class="op">)</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="op">.</span><span class="fu">UseOrleans</span><span class="op">((</span>ctx<span class="op">,</span> siloBuilder<span class="op">)</span> <span class="op">=&gt;</span> <span class="op">{</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> <span class="op">(</span>ctx<span class="op">.</span><span class="fu">HostingEnvironment</span><span class="op">.</span><span class="fu">IsDevelopment</span><span class="op">())</span> <span class="co">// or singleprocess</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>      siloBuilder<span class="op">.</span><span class="fu">UseLocalhostClustering</span><span class="op">();</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>      siloBuilder<span class="op">.</span><span class="fu">AddMemoryGrainStorage</span><span class="op">(</span><span class="st">&quot;definitions&quot;</span><span class="op">);</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">else</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>      siloBuilder<span class="op">.</span><span class="fu">UseKubernetesHosting</span><span class="op">();</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>      <span class="co">// use redis for clustering &amp; persistence</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>      <span class="dt">var</span> redisAddress <span class="op">=</span> <span class="st">&quot;redis:6379&quot;</span><span class="op">;</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>      siloBuilder<span class="op">.</span><span class="fu">UseRedisClustering</span><span class="op">(</span>opt <span class="op">=&gt;</span> opt<span class="op">.</span><span class="fu">ConnectionString</span> <span class="op">=</span> redisAddress<span class="op">);</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>      siloBuilder<span class="op">.</span><span class="fu">AddRedisGrainStorage</span><span class="op">(</span><span class="st">&quot;definitions&quot;</span><span class="op">,</span> opt <span class="op">=&gt;</span> opt<span class="op">.</span><span class="fu">ConnectionString</span> <span class="op">=&gt;</span> redisAddress<span class="op">);</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>  <span class="op">})</span></span></code></pre></div>
+</section>
+<section id="microsoft-orleans-nachteile" class="slide level2">
+<h2>Microsoft Orleans Nachteile</h2>
+<ul>
+<li class="fragment">MSBuild code generation</li>
+<li class="fragment">Überschreibung von default-Eigenschaften</li>
+<li class="fragment">Unerwünschte Aktivierungen möglich</li>
+<li class="fragment">Aktivierungen zu einem Node festnageln</li>
+<li class="fragment">Messagin versteckt hinter RPC-Semantic</li>
+<li class="fragment">Stärkere Kopplung durch Actor-Interfaces UND Argumente</li>
+<li class="fragment">OOP-Lastig: Vererbung, Interfaces, DI</li>
+</ul>
+</section>
+<section id="asynkron-proto.actor" class="slide level2">
+<h2>Asynkron Proto.Actor</h2>
+<ul>
+<li class="fragment">Lessons learned by Orleans and Akka
+<ul>
+<li class="fragment">Roger Johansson von Akka.NET</li>
+</ul></li>
+<li class="fragment">.NET (C#, F#), JVM (Kotlin), Go</li>
+<li class="fragment">Flexibilität mit bewärten Technologien
+<ul>
+<li class="fragment">C# Pattern matching</li>
+<li class="fragment">Identity - Redis</li>
+<li class="fragment">Culster management - Consul, k8s</li>
+<li class="fragment">Transport - JRPC, Protobuf</li>
+</ul></li>
+<li class="fragment">virtual actor wenn nötig</li>
+<li class="fragment">z.Z am schnellsten unter .NET</li>
+<li class="fragment"><a href="https://www.nuget.org/packages?q=proto.actor">45 NuGets</a></li>
+</ul>
+</section></section>
+<section id="links" class="title-slide slide level1">
+<h1>Links</h1>
+<ul>
+<li class="fragment"><a href="https://vilinski.pages.ifm-sw.net/CodeQualityNotes/actors.html">Slides</a></li>
+<li class="fragment"><a href="https://short.ifm.com/1eoau">Video</a></li>
+<li class="fragment"><a href="https://getakka.net">Akka</a>
+<ul>
+<li class="fragment">https://github.com/petabridge/petabridge-dotnet-new</li>
+<li class="fragment">https://github.com/petabridge/akka-bootcamp</li>
+</ul></li>
+<li class="fragment"><a href="https://dotnet.github.io/orleans/">Orleans</a>
+<ul>
+<li class="fragment">https://github.com/dotnet/orleans-templates</li>
+</ul></li>
+<li class="fragment"><a href="https://proto.actor">proto.actor</a>
+<ul>
+<li class="fragment">https://github.com/AsynkronIT/protoactor-dotnet/tree/dev/examples</li>
+</ul></li>
+</ul>
+</section>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/reveal.js@^4//dist/reveal.js"></script>
+
+  // reveal.js plugins
+  <script src="https://unpkg.com/reveal.js@^4//plugin/notes/notes.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4//plugin/search/search.js"></script>
+  <script src="https://unpkg.com/reveal.js@^4//plugin/zoom/zoom.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+      
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Transition style
+        transition: 'concave', // none/fade/slide/convex/concave/zoom
+        // Bounds for smallest/largest possible scale to apply to content
+        minScale: 0.1,
+        maxScale: 1.0,
+
+        // reveal.js plugins
+        plugins: [
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    </body>
+</html>
